@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MLAI Data Ingestion - Nhập Liệu MongoDB</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .tag-chip.active {
+      background-color: #2563eb;
+      color: white;
+      border-color: #1d4ed8;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
+
+  <!-- Header -->
+  <header class="bg-indigo-900 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-2">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center text-xl font-bold">
+          <i class="fa-solid fa-brain"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold tracking-wide">MLAI Decision Intelligence</h1>
+          <p class="text-xs text-indigo-200">Cổng Quản Trị Nhập Liệu & Lưu Trữ MongoDB</p>
+        </div>
+      </div>
+      <!-- Connection Status -->
+      <div class="flex items-center bg-indigo-950/60 px-3 py-1.5 rounded-full text-xs space-x-2 border border-indigo-700">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="mongoStatusText" class="text-indigo-100">MongoDB: mongodb://localhost:27017 (Auto Fallback)</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full">
+    
+    <!-- Tab Navigation -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-1.5 mb-6 flex flex-wrap gap-1">
+      <button onclick="switchTab('tab-experience')" id="btn-tab-experience" class="tab-btn active flex-1 min-w-[150px] py-2.5 px-3 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2 bg-indigo-600 text-white shadow">
+        <i class="fa-solid fa-graduation-cap"></i> DB4: Kinh Nghiệm
+      </button>
+      <button onclick="switchTab('tab-problem')" id="btn-tab-problem" class="tab-btn flex-1 min-w-[150px] py-2.5 px-3 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-100">
+        <i class="fa-solid fa-triangle-exclamation text-amber-500"></i> DB3: Vấn Đề / Rủi Ro
+      </button>
+      <button onclick="switchTab('tab-market')" id="btn-tab-market" class="tab-btn flex-1 min-w-[150px] py-2.5 px-3 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-100">
+        <i class="fa-solid fa-chart-line text-blue-500"></i> DB5: Thị Trường
+      </button>
+      <button onclick="switchTab('tab-user-plan')" id="btn-tab-user-plan" class="tab-btn flex-1 min-w-[150px] py-2.5 px-3 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-100">
+        <i class="fa-solid fa-rocket text-purple-500"></i> Yêu Cầu Người Dùng
+      </button>
+      <button onclick="switchTab('tab-explorer')" id="btn-tab-explorer" class="tab-btn flex-1 min-w-[150px] py-2.5 px-3 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-100">
+        <i class="fa-solid fa-database text-emerald-500"></i> Xem Dữ Liệu Đã Nộp
+      </button>
+    </div>
+
+    <!-- Alert / Toast Container -->
+    <div id="toastNotification" class="hidden mb-4 p-4 rounded-lg flex items-center justify-between shadow-md transition-all">
+      <div class="flex items-center gap-3">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-xl"></i>
+        <span id="toastMessage" class="text-sm font-medium"></span>
+      </div>
+      <button onclick="hideToast()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <!-- TAB 1: NHẬP BÀI HỌC KINH NGHIỆM (DB4) -->
+    <section id="tab-experience" class="tab-content block">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
+        <div class="flex items-center justify-between border-b pb-4 mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center text-sm font-bold">DB4</span>
+              Nhập Bài Học Kinh Nghiệm Thực Tế
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">Dữ liệu sẽ được lưu vào MongoDB Collection: <code class="bg-slate-100 px-1 py-0.5 rounded text-indigo-600 font-mono">experiences</code></p>
+          </div>
+          <span class="px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200 text-xs font-medium rounded-full">Tag-Indexed</span>
+        </div>
+
+        <form onsubmit="submitForm(event, 'experience')" class="space-y-6">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Tiêu Đề Bài Học *</label>
+            <input type="text" id="exp_title" required placeholder="Ví dụ: Tối ưu tốc độ xuất đơn dưới 60s cổng trường ĐH" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Đúc Kết Rút Ra (Key Takeaway - Bắt buộc ngắn gọn) *</label>
+            <textarea id="exp_takeaway" required rows="2" placeholder="Ví dụ: Sơ chế nhân trước 05:45; 1 người kẹp bánh riêng, 1 người thu tiền riêng để giữ thời gian ra món dưới 60s." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+            <p class="text-xs text-slate-400 mt-1"><i class="fa-solid fa-circle-info"></i> Trường này sẽ được Bộ chắt lọc (Distillation Engine) trích xuất nạp thẳng vào LLM.</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Câu Chuyện Chi Tiết / Bối Cảnh (Tùy chọn)</label>
+            <textarea id="exp_story" rows="3" placeholder="Chủ xe bánh mì chia sẻ rằng tháng đầu bị quá tải lúc 7h sáng, học sinh xếp hàng đông dẫn tới bỏ đi..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+          </div>
+
+          <!-- Section Chọn Tags -->
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+            <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-tags text-indigo-600"></i> Gắn Thẻ Phân Loại (Chọn Tags)
+            </h3>
+
+            <!-- Tag 0: Universal -->
+            <div class="flex items-center gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+              <input type="checkbox" id="exp_tag_0" value="0" class="w-4 h-4 text-amber-600 rounded focus:ring-amber-500">
+              <label for="exp_tag_0" class="text-xs text-amber-900 cursor-pointer">
+                <strong class="text-amber-800 font-bold">[Tag 0] Quy tắc phổ quát:</strong> Gắn thẻ này nếu bài học áp dụng chung cho mọi loại hình kinh doanh (vd: quản trị tiền mặt, cọc nhà, dự phòng 3 tháng).
+              </label>
+            </div>
+
+            <!-- 10 Mô hình kinh doanh Dropdown -->
+            <div>
+              <label class="block text-xs font-medium text-slate-700 mb-1">Mô hình kinh doanh liên quan:</label>
+              <select id="exp_model" class="w-full md:w-1/2 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-indigo-500">
+                <option value="">-- Áp dụng chung hoặc không chọn --</option>
+                <option value="101">[101] Quán ăn sáng</option>
+                <option value="102">[102] Quán nước / Cà phê</option>
+                <option value="103">[103] Quán cơm / Nhà hàng nhỏ</option>
+                <option value="104">[104] Quán nhậu / Ăn vặt</option>
+                <option value="105">[105] Kiosk / Xe đẩy mang đi</option>
+                <option value="106">[106] Cửa hàng tạp hóa / Đại lý</option>
+                <option value="107">[107] Cửa hàng chuyên doanh bán lẻ</option>
+                <option value="108">[108] Tiệm dịch vụ làm đẹp / Spa</option>
+                <option value="109">[109] Tiệm dịch vụ đời sống</option>
+                <option value="110">[110] Siêu thị mini / Tiện lợi</option>
+              </select>
+            </div>
+
+            <!-- Top 20 Sản phẩm Chips -->
+            <div>
+              <label class="block text-xs font-medium text-slate-700 mb-2">Nhóm sản phẩm liên quan (Top 20):</label>
+              <div id="exp_products_container" class="flex flex-wrap gap-2">
+                <!-- Sẽ render tự động qua JS -->
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end pt-2">
+            <button type="submit" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-sm transition flex items-center gap-2 shadow">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Nộp Bài Học Lên MongoDB
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- TAB 2: NHẬP VẤN ĐỀ & RỦI RO (DB3) -->
+    <section id="tab-problem" class="tab-content hidden">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
+        <div class="flex items-center justify-between border-b pb-4 mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <span class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center text-sm font-bold">DB3</span>
+              Nhập Vấn Đề & Rủi Ro Vận Hành
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">Dữ liệu sẽ được lưu vào MongoDB Collection: <code class="bg-slate-100 px-1 py-0.5 rounded text-indigo-600 font-mono">problems</code></p>
+          </div>
+          <span class="px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200 text-xs font-medium rounded-full">Tag-Indexed</span>
+        </div>
+
+        <form onsubmit="submitForm(event, 'problem')" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="md:col-span-2">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Tên Vấn Đề / Rủi Ro *</label>
+              <input type="text" id="prob_title" required placeholder="Ví dụ: Tăng giá đột biến nguyên vật liệu thịt nguội sau 3 tháng" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Mức Độ Nghiêm Trọng *</label>
+              <select id="prob_severity" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm font-medium bg-white focus:ring-indigo-500">
+                <option value="HIGH" class="text-red-600 font-bold">🔴 CAO (Nguy cơ đứt gãy dòng tiền)</option>
+                <option value="MEDIUM" class="text-amber-600 font-bold" selected>🟡 TRUNG BÌNH (Ảnh hưởng lợi nhuận)</option>
+                <option value="LOW" class="text-blue-600 font-bold">🔵 THẤP (Lỗi vận hành nhỏ)</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Tóm Tắt Ngắn Gọn (Summary) *</label>
+            <textarea id="prob_summary" required rows="2" placeholder="Ví dụ: Chi phí nguyên liệu đầu vào tăng 15-20% làm đứt dòng tiền của xe bánh mì nếu không ký hợp đồng cố định giá." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+          </div>
+
+          <!-- Section Chọn Tags cho DB3 -->
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+            <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-tags text-amber-600"></i> Gắn Thẻ Phân Loại (Chọn Tags)
+            </h3>
+
+            <!-- Tag 0: Universal -->
+            <div class="flex items-center gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+              <input type="checkbox" id="prob_tag_0" value="0" class="w-4 h-4 text-amber-600 rounded focus:ring-amber-500">
+              <label for="prob_tag_0" class="text-xs text-amber-900 cursor-pointer">
+                <strong class="text-amber-800 font-bold">[Tag 0] Rủi ro chung mọi ngành:</strong> (vd: chi phí thuê mặt bằng tăng, nhân sự nghỉ đột xuất, cạn dòng tiền).
+              </label>
+            </div>
+
+            <!-- 10 Mô hình kinh doanh -->
+            <div>
+              <label class="block text-xs font-medium text-slate-700 mb-1">Mô hình kinh doanh chịu ảnh hưởng:</label>
+              <select id="prob_model" class="w-full md:w-1/2 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-indigo-500">
+                <option value="">-- Mọi mô hình hoặc không chọn --</option>
+                <option value="101">[101] Quán ăn sáng</option>
+                <option value="102">[102] Quán nước / Cà phê</option>
+                <option value="103">[103] Quán cơm / Nhà hàng nhỏ</option>
+                <option value="104">[104] Quán nhậu / Ăn vặt</option>
+                <option value="105">[105] Kiosk / Xe đẩy mang đi</option>
+                <option value="106">[106] Cửa hàng tạp hóa / Đại lý</option>
+                <option value="107">[107] Cửa hàng chuyên doanh bán lẻ</option>
+                <option value="108">[108] Tiệm dịch vụ làm đẹp / Spa</option>
+                <option value="109">[109] Tiệm dịch vụ đời sống</option>
+                <option value="110">[110] Siêu thị mini / Tiện lợi</option>
+              </select>
+            </div>
+
+            <!-- 20 Sản phẩm Chips -->
+            <div>
+              <label class="block text-xs font-medium text-slate-700 mb-2">Nhóm sản phẩm liên quan (Top 20):</label>
+              <div id="prob_products_container" class="flex flex-wrap gap-2"></div>
+            </div>
+          </div>
+
+          <div class="flex justify-end pt-2">
+            <button type="submit" class="px-6 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg text-sm transition flex items-center gap-2 shadow">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Nộp Vấn Đề Lên MongoDB
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- TAB 3: NHẬP THỊ TRƯỜNG & HÀNH VI (DB5) -->
+    <section id="tab-market" class="tab-content hidden">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
+        <div class="flex items-center justify-between border-b pb-4 mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <span class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-bold">DB5</span>
+              Nhập Thông Tin Thị Trường & Khách Hàng
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">Dữ liệu sẽ được lưu vào MongoDB Collection: <code class="bg-slate-100 px-1 py-0.5 rounded text-indigo-600 font-mono">market_segments</code></p>
+          </div>
+          <span class="px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200 text-xs font-medium rounded-full">Tag-Indexed</span>
+        </div>
+
+        <form onsubmit="submitForm(event, 'market')" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Phân Khúc Khách Hàng *</label>
+              <input type="text" id="mkt_segment" required placeholder="Ví dụ: Sinh viên ĐH Bách Khoa" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Mức Chi Trả / Suất *</label>
+              <input type="text" id="mkt_budget" required placeholder="Ví dụ: 18.000 - 30.000 VND" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Khung Giờ Cao Điểm *</label>
+              <input type="text" id="mkt_peak" required placeholder="Ví dụ: 06:45 - 07:30" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Thói Quen & Hành Vi Tiêu Dùng *</label>
+            <textarea id="mkt_behavior" required rows="2" placeholder="Ví dụ: Mua mang đi vội trước giờ điểm danh ca 1; chuộng combo có nước uống kèm để tiết kiệm thời gian; ưu tiên chỗ dễ dừng xe máy." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+          </div>
+
+          <!-- Section Chọn Tags cho DB5 -->
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+            <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-tags text-blue-600"></i> Gắn Thẻ Phân Loại (Chọn Tags)
+            </h3>
+            <div>
+              <label class="block text-xs font-medium text-slate-700 mb-2">Nhóm sản phẩm liên quan (Top 20):</label>
+              <div id="mkt_products_container" class="flex flex-wrap gap-2"></div>
+            </div>
+          </div>
+
+          <div class="flex justify-end pt-2">
+            <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm transition flex items-center gap-2 shadow">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Nộp Thị Trường Lên MongoDB
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- TAB 4: FORM YÊU CẦU NGƯỜI DÙNG (USER BUSINESS PLAN) -->
+    <section id="tab-user-plan" class="tab-content hidden">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
+        <div class="flex items-center justify-between border-b pb-4 mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-rocket text-purple-600"></i> Form Nhập Kế Hoạch Kinh Doanh (User Request)
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">Lưu vào Collection: <code class="bg-slate-100 px-1 py-0.5 rounded text-indigo-600 font-mono">business_requests</code> để chạy AI Pipeline</p>
+          </div>
+          <span class="px-3 py-1 bg-purple-50 text-purple-700 border border-purple-200 text-xs font-medium rounded-full">Test End-to-End</span>
+        </div>
+
+        <form onsubmit="submitForm(event, 'user_plan')" class="space-y-6">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Địa Chỉ Dự Kiến Mở Quán *</label>
+            <input type="text" id="user_location" required placeholder="Ví dụ: Cổng trường ĐH Bách Khoa, đường Tô Hiến Thành, Quận 10" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none">
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Mô hình kinh doanh (Bắt buộc chọn) *</label>
+              <select id="user_model_id" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:ring-purple-500">
+                <option value="">-- Chọn 1 trong 10 mô hình --</option>
+                <option value="101">[101] Quán ăn sáng</option>
+                <option value="102">[102] Quán nước / Cà phê</option>
+                <option value="103">[103] Quán cơm / Nhà hàng nhỏ</option>
+                <option value="104">[104] Quán nhậu / Ăn vặt</option>
+                <option value="105" selected>[105] Kiosk / Xe đẩy mang đi</option>
+                <option value="106">[106] Cửa hàng tạp hóa / Đại lý</option>
+                <option value="107">[107] Cửa hàng chuyên doanh bán lẻ</option>
+                <option value="108">[108] Tiệm dịch vụ làm đẹp / Spa</option>
+                <option value="109">[109] Tiệm dịch vụ đời sống</option>
+                <option value="110">[110] Siêu thị mini / Tiện lợi</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Số Vốn Đầu Tư (VND) *</label>
+              <input type="number" id="user_budget" required value="300000000" placeholder="Ví dụ: 300000000" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none">
+            </div>
+          </div>
+
+          <!-- Chọn Nhóm Sản Phẩm (Top 20) -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Nhóm Sản Phẩm Dự Kiến Bán (Chọn 1 - 3 nhóm trong Top 20) *</label>
+            <div id="user_products_container" class="flex flex-wrap gap-2 p-3 bg-slate-50 rounded-xl border border-slate-200"></div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Chi Phí Thuê Mặt Bằng / Tháng (Nếu đã biết)</label>
+              <input type="number" id="user_rent" placeholder="Để trống nếu chưa biết -> UNKNOWN" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none">
+              <span class="text-xs text-slate-400">Nếu để trống, hệ thống sẽ tự gắn cờ RỦI RO và hành động khảo sát 30 ngày.</span>
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Khách Hàng Mục Tiêu (Nếu có)</label>
+              <input type="text" id="user_target_customer" placeholder="Để trống -> Hệ thống tự suy luận từ DB1 + DB5" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Ghi Chú Mở Rộng (Mô tả món cụ thể, giờ mở cửa...)</label>
+            <textarea id="user_notes" rows="2" placeholder="Ví dụ: Bán bánh mì que thịt nướng và cà phê muối mang đi, mở từ 06:00 sáng, ưu tiên phục vụ siêu tốc." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none"></textarea>
+          </div>
+
+          <div class="flex justify-end pt-2">
+            <button type="submit" class="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg text-sm transition flex items-center gap-2 shadow">
+              <i class="fa-solid fa-paper-plane"></i> Lưu Kế Hoạch Lên MongoDB
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- TAB 5: DATA EXPLORER & VIEWER -->
+    <section id="tab-explorer" class="tab-content hidden">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
+        <div class="flex flex-wrap items-center justify-between border-b pb-4 mb-6 gap-3">
+          <div>
+            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-table-list text-emerald-600"></i> Kho Dữ Liệu Đã Nộp Lên MongoDB
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">Xem trực tiếp các bản ghi đã lưu trong CSDL</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <select id="explorer_collection" onchange="loadSubmittedData()" class="px-3 py-2 border border-slate-300 rounded-lg text-xs font-semibold bg-white">
+              <option value="experiences">DB4: Kinh Nghiệm (experiences)</option>
+              <option value="problems">DB3: Vấn Đề (problems)</option>
+              <option value="market_segments">DB5: Thị Trường (market_segments)</option>
+              <option value="business_requests">Yêu Cầu (business_requests)</option>
+            </select>
+            <button onclick="loadSubmittedData()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition flex items-center gap-1">
+              <i class="fa-solid fa-rotate"></i> Làm mới
+            </button>
+          </div>
+        </div>
+
+        <div id="explorer_loading" class="hidden text-center py-8 text-slate-400">
+          <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i>
+          <p class="text-xs">Đang tải dữ liệu từ CSDL...</p>
+        </div>
+
+        <div id="explorer_container" class="space-y-3">
+          <!-- Render danh sách bản ghi qua JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+    Hệ thống Decision Intelligence (MLAI Platform) &bull; MongoDB 2dsphere & Tag-Indexed Architecture
+  </footer>
+
+  <!-- Script Logic -->
+  <script>
+    // Danh mục 20 sản phẩm chuẩn
+    const TOP_20_PRODUCTS = [
+      { id: 201, slug: "do_uong", name: "Đồ uống" },
+      { id: 202, slug: "com", name: "Cơm" },
+      { id: 203, slug: "mon_nuoc", name: "Món nước" },
+      { id: 204, slug: "banh_mi_diem_tam", name: "Bánh mì & Điểm tâm" },
+      { id: 205, slug: "do_an_vat", name: "Đồ ăn vặt" },
+      { id: 206, slug: "mon_nhau_lau_nuong", name: "Món nhậu & Lẩu nướng" },
+      { id: 207, slug: "thuc_pham_tuoi_song", name: "Thực phẩm tươi sống" },
+      { id: 208, slug: "tap_hoa_nhu_yeu_pham", name: "Tạp hóa & Nhu yếu phẩm" },
+      { id: 209, slug: "quan_ao_thoi_trang", name: "Quần áo thời trang" },
+      { id: 210, slug: "giay_dep_phu_kien", name: "Giày dép & Phụ kiện" },
+      { id: 211, slug: "my_pham_cham_soc_da", name: "Mỹ phẩm & Chăm sóc da" },
+      { id: 212, slug: "cat_toc_lam_toc", name: "Cắt tóc & Làm tóc" },
+      { id: 213, slug: "massage_spa", name: "Massage & Spa" },
+      { id: 214, slug: "nail_mi", name: "Làm móng & Nối mi" },
+      { id: 215, slug: "thuoc_thuc_pham_chuc_nang", name: "Thuốc & TPCN" },
+      { id: 216, slug: "dien_thoai_phu_kien_cong_nghe", name: "Phụ kiện công nghệ" },
+      { id: 217, slug: "do_gia_dung_dien_nuoc", name: "Đồ gia dụng & Điện nước" },
+      { id: 218, slug: "van_phong_pham_qua_tang", name: "Văn phòng phẩm & In ấn" },
+      { id: 219, slug: "giat_ui", name: "Giặt ủi & Giặt sấy" },
+      { id: 220, slug: "sua_chua_xe_may", name: "Sửa xe máy" }
+    ];
+
+    // State lưu các sản phẩm được chọn trên các tab
+    const selectedProducts = {
+      exp: new Set([204]),
+      prob: new Set([204]),
+      mkt: new Set([204, 201]),
+      user: new Set([204, 201])
+    };
+
+    // Khởi tạo giao diện
+    window.addEventListener("DOMContentLoaded", () => {
+      renderProductChips("exp_products_container", "exp");
+      renderProductChips("prob_products_container", "prob");
+      renderProductChips("mkt_products_container", "mkt");
+      renderProductChips("user_products_container", "user");
+      checkBackendHealth();
+    });
+
+    function renderProductChips(containerId, prefix) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = TOP_20_PRODUCTS.map(p => {
+        const isSelected = selectedProducts[prefix].has(p.id);
+        return `
+          <button type="button" onclick="toggleProduct('${prefix}', ${p.id}, this)" class="tag-chip px-2.5 py-1 text-xs rounded-full border transition font-medium ${isSelected ? 'active' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-100'}">
+            [${p.id}] ${p.name}
+          </button>
+        `;
+      }).join("");
+    }
+
+    function toggleProduct(prefix, prodId, btnElement) {
+      if (selectedProducts[prefix].has(prodId)) {
+        selectedProducts[prefix].delete(prodId);
+        btnElement.classList.remove("active");
+        btnElement.classList.add("bg-white", "text-slate-600", "border-slate-300");
+      } else {
+        selectedProducts[prefix].add(prodId);
+        btnElement.classList.add("active");
+        btnElement.classList.remove("bg-white", "text-slate-600", "border-slate-300");
+      }
+    }
+
+    // Chuyển đổi Tab
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
+      document.querySelectorAll(".tab-btn").forEach(el => {
+        el.classList.remove("active", "bg-indigo-600", "text-white", "shadow");
+        el.classList.add("text-slate-600", "hover:bg-slate-100");
+      });
+
+      document.getElementById(tabId).classList.remove("hidden");
+      const activeBtn = document.getElementById("btn-" + tabId);
+      if (activeBtn) {
+        activeBtn.classList.add("active", "bg-indigo-600", "text-white", "shadow");
+        activeBtn.classList.remove("text-slate-600", "hover:bg-slate-100");
+      }
+
+      if (tabId === "tab-explorer") {
+        loadSubmittedData();
+      }
+    }
+
+    // Toast thông báo
+    function showToast(message, isSuccess = true) {
+      const toast = document.getElementById("toastNotification");
+      const msg = document.getElementById("toastMessage");
+      const icon = document.getElementById("toastIcon");
+
+      msg.innerText = message;
+      toast.className = `mb-4 p-4 rounded-lg flex items-center justify-between shadow-md transition-all ${
+        isSuccess ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-red-50 text-red-800 border border-red-200'
+      }`;
+      icon.className = isSuccess ? "fa-solid fa-circle-check text-emerald-600 text-xl" : "fa-solid fa-circle-xmark text-red-600 text-xl";
+
+      toast.classList.remove("hidden");
+      setTimeout(hideToast, 5000);
+    }
+
+    function hideToast() {
+      document.getElementById("toastNotification").classList.add("hidden");
+    }
+
+    // Kiểm tra kết nối Backend
+    async function checkBackendHealth() {
+      try {
+        const res = await fetch("/api/health");
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById("mongoStatusText").innerText = data.mongo_connected ? "MongoDB: Kết nối thành công" : "MongoDB: Dùng Local JSON Storage (Chưa bật Mongo)";
+        }
+      } catch (err) {
+        document.getElementById("mongoStatusText").innerText = "Server: Standalone Mode (Sẵn sàng nộp)";
+      }
+    }
+
+    // Nộp Form lên Backend API
+    async function submitForm(event, formType) {
+      event.preventDefault();
+      let payload = {};
+      let collectionName = "";
+
+      if (formType === "experience") {
+        collectionName = "experiences";
+        const tagIds = Array.from(selectedProducts.exp);
+        if (document.getElementById("exp_tag_0").checked) tagIds.unshift(0);
+        const modelVal = document.getElementById("exp_model").value;
+        if (modelVal) tagIds.push(parseInt(modelVal));
+
+        payload = {
+          type: "experience",
+          title: document.getElementById("exp_title").value,
+          key_takeaway: document.getElementById("exp_takeaway").value,
+          story: document.getElementById("exp_story").value,
+          tag_ids: tagIds,
+          created_at: new Date().toISOString()
+        };
+      } 
+      else if (formType === "problem") {
+        collectionName = "problems";
+        const tagIds = Array.from(selectedProducts.prob);
+        if (document.getElementById("prob_tag_0").checked) tagIds.unshift(0);
+        const modelVal = document.getElementById("prob_model").value;
+        if (modelVal) tagIds.push(parseInt(modelVal));
+
+        payload = {
+          type: "problem",
+          title: document.getElementById("prob_title").value,
+          severity: document.getElementById("prob_severity").value,
+          summary: document.getElementById("prob_summary").value,
+          tag_ids: tagIds,
+          created_at: new Date().toISOString()
+        };
+      }
+      else if (formType === "market") {
+        collectionName = "market_segments";
+        const tagIds = Array.from(selectedProducts.mkt);
+
+        payload = {
+          type: "market",
+          segment: document.getElementById("mkt_segment").value,
+          price_tolerance: document.getElementById("mkt_budget").value,
+          peak_traffic: document.getElementById("mkt_peak").value,
+          behavior_notes: document.getElementById("mkt_behavior").value,
+          tag_ids: tagIds,
+          created_at: new Date().toISOString()
+        };
+      }
+      else if (formType === "user_plan") {
+        collectionName = "business_requests";
+        const rentVal = document.getElementById("user_rent").value;
+        payload = {
+          location_text: document.getElementById("user_location").value,
+          business_model_id: parseInt(document.getElementById("user_model_id").value),
+          product_ids: Array.from(selectedProducts.user),
+          budget: parseFloat(document.getElementById("user_budget").value),
+          target_customer: document.getElementById("user_target_customer").value || null,
+          rent: rentVal ? parseFloat(rentVal) : null,
+          notes: document.getElementById("user_notes").value,
+          created_at: new Date().toISOString()
+        };
+      }
+
+      try {
+        const response = await fetch("/api/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            collection: collectionName,
+            document: payload
+          })
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          showToast(`Đã nộp thành công vào MongoDB (${collectionName})! ID: ${result.inserted_id || 'OK'}`);
+          // Reset form tương ứng
+          event.target.reset();
+        } else {
+          showToast(`Lỗi: ${result.error || 'Không thể lưu'}`, false);
+        }
+      } catch (err) {
+        showToast(`Không kết nối được server API. Hãy chắc chắn bạn đã chạy: python server.py`, false);
+      }
+    }
+
+    // Tải dữ liệu đã nộp
+    async function loadSubmittedData() {
+      const col = document.getElementById("explorer_collection").value;
+      const container = document.getElementById("explorer_container");
+      const loading = document.getElementById("explorer_loading");
+
+      loading.classList.remove("hidden");
+      container.innerHTML = "";
+
+      try {
+        const res = await fetch(`/api/documents?collection=${col}`);
+        const data = await res.json();
+        loading.classList.add("hidden");
+
+        if (!data.documents || data.documents.length === 0) {
+          container.innerHTML = `
+            <div class="text-center py-8 text-slate-400 border-2 border-dashed border-slate-200 rounded-xl">
+              <i class="fa-regular fa-folder-open text-3xl mb-2 text-slate-300"></i>
+              <p class="text-xs">Chưa có bản ghi nào trong collection <strong>${col}</strong>.</p>
+              <p class="text-xs text-slate-400 mt-1">Hãy nhập dữ liệu ở các tab bên trên để lưu trữ.</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = data.documents.map((doc, idx) => {
+          const tagsHtml = (doc.tag_ids || doc.product_ids || []).map(tid => `
+            <span class="px-2 py-0.5 rounded text-[11px] font-mono ${tid === 0 ? 'bg-amber-100 text-amber-800 font-bold' : 'bg-indigo-50 text-indigo-700'}">
+              #${tid}
+            </span>
+          `).join(" ");
+
+          return `
+            <div class="p-4 border border-slate-200 rounded-xl bg-slate-50/50 hover:bg-white hover:shadow-sm transition">
+              <div class="flex items-start justify-between gap-3 mb-1">
+                <h4 class="text-sm font-bold text-slate-800">
+                  ${idx + 1}. ${doc.title || doc.segment || doc.location_text || 'Bản ghi ' + (doc._id || idx)}
+                </h4>
+                ${doc.severity ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold ${doc.severity === 'HIGH' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}">${doc.severity}</span>` : ''}
+              </div>
+              <p class="text-xs text-slate-600 mb-2 leading-relaxed">
+                ${doc.key_takeaway || doc.summary || doc.behavior_notes || ('Mô hình ID: ' + doc.business_model_id + ' | Vốn: ' + (doc.budget ? doc.budget.toLocaleString() : 'N/A') + ' VND')}
+              </p>
+              <div class="flex items-center justify-between text-[11px] text-slate-400 border-t pt-2 mt-2">
+                <div class="flex items-center gap-1">
+                  <span>Tags:</span>
+                  ${tagsHtml || '<span class="text-slate-300">Không có</span>'}
+                </div>
+                <span>${doc.created_at ? new Date(doc.created_at).toLocaleTimeString('vi-VN') : ''}</span>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+      } catch (err) {
+        loading.classList.add("hidden");
+        container.innerHTML = `<div class="text-xs text-red-500 text-center py-4">Không thể kết nối đến backend API.</div>`;
+      }
+    }
+  </script>
+</body>
+</html>
