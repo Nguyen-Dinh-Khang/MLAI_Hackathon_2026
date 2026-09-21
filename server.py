@@ -47,19 +47,32 @@ DB_NAME = os.getenv("DB_NAME", "mlai_decision_intelligence")
 mongo_client = None
 mongo_db = None
 
-# Thử kết nối MongoDB qua pymongo
-try:
-    from pymongo import MongoClient
-    mongo_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=2000)
-    # Ping kiểm tra kết nối
-    mongo_client.admin.command('ping')
-    mongo_db = mongo_client[DB_NAME]
-    print(f"[*] Kết nối thành công tới MongoDB: {MONGO_URI} (Database: {DB_NAME})")
-except Exception as e:
-    print(f"[!] Không thể kết nối MongoDB daemon ({e}).")
-    print(f"[*] Hệ thống tự động kích hoạt chế độ: LOCAL JSON STORAGE tại: {DATA_DIR}")
-    mongo_client = None
-    mongo_db = None
+def mask_uri(uri: str) -> str:
+    """Che giấu mật khẩu trong chuỗi URI khi in log bảo mật."""
+    import re
+    return re.sub(r'://([^:]+):([^@]+)@', r'://\1:****@', uri)
+
+def init_mongo_connection():
+    """Khởi tạo hoặc thử kết nối lại MongoDB."""
+    global mongo_client, mongo_db
+    if mongo_db is not None:
+        return mongo_db
+    try:
+        from pymongo import MongoClient
+        # Timeout 5000ms để đảm bảo ổn định trên môi trường Cloud Render
+        client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+        client.admin.command('ping')
+        mongo_client = client
+        mongo_db = client[DB_NAME]
+        print(f"[*] Kết nối THÀNH CÔNG tới MongoDB: {mask_uri(MONGO_URI)} (DB: {DB_NAME})")
+        return mongo_db
+    except Exception as e:
+        print(f"[!] Không thể kết nối MongoDB daemon ({e}).")
+        print(f"[*] Hệ thống kích hoạt chế độ dự phòng: LOCAL JSON STORAGE tại: {DATA_DIR}")
+        return None
+
+# Thử kết nối lần đầu khi bật server
+init_mongo_connection()
 
 
 def save_to_json_fallback(collection_name: str, document: dict) -> str:
@@ -128,12 +141,13 @@ class MLAIHttpHandler(BaseHTTPRequestHandler):
 
         # 2. API Health Check
         elif path == "/api/health":
+            db = init_mongo_connection()
             self._set_json_headers(200)
             status_data = {
                 "status": "online",
-                "mongo_connected": mongo_db is not None,
-                "mongo_uri": MONGO_URI if mongo_db else "Using Local JSON Fallback",
-                "storage_mode": "MongoDB" if mongo_db else "Local JSON"
+                "mongo_connected": db is not None,
+                "mongo_uri": mask_uri(MONGO_URI) if db is not None else "Using Local JSON Fallback",
+                "storage_mode": "MongoDB" if db is not None else "Local JSON"
             }
             self.wfile.write(json.dumps(status_data).encode("utf-8"))
             return
@@ -143,11 +157,12 @@ class MLAIHttpHandler(BaseHTTPRequestHandler):
             query_params = urllib.parse.parse_qs(parsed.query)
             col_name = query_params.get("collection", ["experiences"])[0]
 
+            db = init_mongo_connection()
             docs = []
             # Nếu có kết nối MongoDB thật
-            if mongo_db is not None:
+            if db is not None:
                 try:
-                    cursor = mongo_db[col_name].find().sort("_id", -1).limit(50)
+                    cursor = db[col_name].find().sort("_id", -1).limit(50)
                     for d in cursor:
                         d["_id"] = str(d.get("_id"))
                         docs.append(d)
@@ -182,9 +197,10 @@ class MLAIHttpHandler(BaseHTTPRequestHandler):
                 storage_target = "Local JSON Storage"
 
                 # 1. Thử lưu vào MongoDB
-                if mongo_db is not None:
+                db = init_mongo_connection()
+                if db is not None:
                     try:
-                        res = mongo_db[collection_name].insert_one(document)
+                        res = db[collection_name].insert_one(document)
                         inserted_id = str(res.inserted_id)
                         storage_target = "MongoDB Database"
                         print(f"[OK] Đã chèn vào MongoDB '{collection_name}': {inserted_id}")

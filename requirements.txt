@@ -1,0 +1,2 @@
+# Dependencies cho MLAI Data Ingestion App
+pymongo[srv]>=4.6.0
