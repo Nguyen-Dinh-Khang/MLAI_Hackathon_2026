@@ -1,0 +1,36 @@
+[
+  {
+    "_id": "comp_01",
+    "name": "Bánh Mì Má Hải - Lý Thường Kiệt",
+    "location": {
+      "type": "Point",
+      "coordinates": [106.6582, 10.7730]
+    },
+    "business_model_id": 105,
+    "product_ids": [204],
+    "price_range": "18.000 - 25.000 VND",
+    "rating": 4.5,
+    "review_count": 120,
+    "operating_hours": "06:00 - 10:00",
+    "is_direct": true,
+    "notes": "Mạnh: Giá rẻ, thương hiệu quen thuộc. Yếu: Không có cà phê pha máy ngon, chỉ bán mang đi.",
+    "created_at": "2026-09-21T20:05:00.000Z"
+  },
+  {
+    "_id": "comp_02",
+    "name": "Tiệm Cà Phê Sinh Viên - Hẻm Tô Hiến Thành",
+    "location": {
+      "type": "Point",
+      "coordinates": [106.6595, 10.7715]
+    },
+    "business_model_id": 102,
+    "product_ids": [201],
+    "price_range": "20.000 - 35.000 VND",
+    "rating": 4.2,
+    "review_count": 85,
+    "operating_hours": "06:30 - 22:00",
+    "is_direct": false,
+    "notes": "Mạnh: Không gian ngồi lại có máy lạnh, wifi. Yếu: Đồ ăn sáng nghèo nàn, thời gian chờ lâu > 5 phút.",
+    "created_at": "2026-09-21T20:10:00.000Z"
+  }
+]

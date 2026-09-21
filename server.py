@@ -52,6 +52,21 @@ def mask_uri(uri: str) -> str:
     import re
     return re.sub(r'://([^:]+):([^@]+)@', r'://\1:****@', uri)
 
+def setup_database_indexes(db):
+    """Tự động thiết lập Index 2dsphere (Không gian) và Tag Index trên MongoDB."""
+    try:
+        # DB1: Index không gian cho Khu vực (bán kính 3km)
+        db.areas.create_index([("center", "2dsphere")])
+        # DB2: Index không gian cho Đối thủ (bán kính 1km)
+        db.competitors.create_index([("location", "2dsphere")])
+        # DB3, DB4, DB5: Index cho mảng số tag_ids ($in)
+        db.problems.create_index([("tag_ids", 1)])
+        db.experiences.create_index([("tag_ids", 1)])
+        db.market_segments.create_index([("tag_ids", 1)])
+        print("[*] Đã cấu hình xong toàn bộ Indexes: 2dsphere (DB1, DB2) & tag_ids (DB3, DB4, DB5)!")
+    except Exception as idx_err:
+        print(f"[!] Cảnh báo tạo index: {idx_err}")
+
 def init_mongo_connection():
     """Khởi tạo hoặc thử kết nối lại MongoDB."""
     global mongo_client, mongo_db
@@ -65,6 +80,7 @@ def init_mongo_connection():
         mongo_client = client
         mongo_db = client[DB_NAME]
         print(f"[*] Kết nối THÀNH CÔNG tới MongoDB: {mask_uri(MONGO_URI)} (DB: {DB_NAME})")
+        setup_database_indexes(mongo_db)
         return mongo_db
     except Exception as e:
         print(f"[!] Không thể kết nối MongoDB daemon ({e}).")
