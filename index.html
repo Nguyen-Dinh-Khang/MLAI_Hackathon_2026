@@ -13,6 +13,21 @@
       color: white;
       border-color: #1d4ed8;
     }
+    .tag-chip.active-amber {
+      background-color: #d97706 !important;
+      color: white !important;
+      border-color: #b45309 !important;
+    }
+    .tag-chip.active-indigo {
+      background-color: #4f46e5 !important;
+      color: white !important;
+      border-color: #4338ca !important;
+    }
+    .tag-chip.active-blue {
+      background-color: #2563eb !important;
+      color: white !important;
+      border-color: #1d4ed8 !important;
+    }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
@@ -323,6 +338,14 @@
               <i class="fa-solid fa-tags text-amber-600"></i> Gắn Thẻ Phân Loại (tag_ids)
             </h3>
 
+            <!-- Nhóm Rủi ro & Sự cố vận hành (Đầu 400: 401 - 408) -->
+            <div>
+              <label class="block text-xs font-bold text-amber-800 mb-2 flex items-center gap-1.5">
+                <i class="fa-solid fa-triangle-exclamation text-amber-600"></i> Nhóm Rủi Ro & Sự Cố Vận Hành (Đầu 400):
+              </label>
+              <div id="prob_tags_container" class="flex flex-wrap gap-2"></div>
+            </div>
+
             <!-- Tag 0: Universal -->
             <div class="flex items-center gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
               <input type="checkbox" id="prob_tag_0" value="0" class="w-4 h-4 text-amber-600 rounded focus:ring-amber-500">
@@ -411,6 +434,14 @@
               <i class="fa-solid fa-tags text-indigo-600"></i> Gắn Thẻ Phân Loại (tag_ids)
             </h3>
 
+            <!-- Chủ đề Bài học & Kinh nghiệm thực chiến (Đầu 500: 501 - 511) -->
+            <div>
+              <label class="block text-xs font-bold text-indigo-800 mb-2 flex items-center gap-1.5">
+                <i class="fa-solid fa-graduation-cap text-indigo-600"></i> Chủ Đề Bài Học & Kinh Nghiệm Thực Chiến (Đầu 500):
+              </label>
+              <div id="exp_tags_container" class="flex flex-wrap gap-2"></div>
+            </div>
+
             <!-- Tag 0: Universal -->
             <div class="flex items-center gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
               <input type="checkbox" id="exp_tag_0" value="0" class="w-4 h-4 text-amber-600 rounded focus:ring-amber-500">
@@ -498,8 +529,17 @@
             <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
               <i class="fa-solid fa-tags text-blue-600"></i> Gắn Thẻ Phân Loại (tag_ids)
             </h3>
+
+            <!-- Phân khúc Khách hàng & Bối cảnh (Đầu 300: 301 - 312) -->
             <div>
-              <label class="block text-xs font-medium text-slate-700 mb-2">Nhóm sản phẩm liên quan (Top 20):</label>
+              <label class="block text-xs font-bold text-blue-800 mb-2 flex items-center gap-1.5">
+                <i class="fa-solid fa-users text-blue-600"></i> Phân Khúc Khách Hàng & Bối Cảnh (Đầu 300):
+              </label>
+              <div id="mkt_tags_container" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-700 mb-2">Nhóm sản phẩm liên quan (Top 20 - Đầu 200):</label>
               <div id="mkt_products_container" class="flex flex-wrap gap-2"></div>
             </div>
           </div>
@@ -664,6 +704,47 @@
       { id: 220, slug: "sua_chua_xe_may", name: "Sửa xe máy" }
     ];
 
+    // Danh mục các nhóm Tag đặc thù (Đầu 4 cho DB3, Đầu 5 cho DB4, Đầu 3 cho DB5) theo file Database
+    const TAGS_DB3_PROBLEMS = [
+      { id: 401, name: "Mặt bằng & Pháp lý" },
+      { id: 402, name: "Dòng tiền & Định giá" },
+      { id: 403, name: "Chuỗi cung ứng & Nguyên liệu" },
+      { id: 404, name: "Vận hành & Nhân sự" },
+      { id: 405, name: "Marketing & Giữ chân khách" },
+      { id: 406, name: "Sản phẩm & Trải nghiệm" },
+      { id: 407, name: "Bán hàng đa kênh & App/TMĐT" },
+      { id: 408, name: "Đối thủ & Chiến tranh giá" }
+    ];
+
+    const TAGS_DB4_EXPERIENCES = [
+      { id: 501, name: "Tối ưu tốc độ & Quy trình ra món" },
+      { id: 502, name: "Bí quyết pha chế, nấu nướng & Giữ vị chuẩn" },
+      { id: 503, name: "Kỹ năng giao tiếp & Xử lý tình huống" },
+      { id: 504, name: "Bán kèm, Upsell & Thiết kế Combo" },
+      { id: 505, name: "Quản trị thợ & Nhân sự thời vụ" },
+      { id: 506, name: "Quản lý mối hàng & Chọn nguyên liệu tươi ngon" },
+      { id: 507, name: "Bố trí không gian & Tiện ích giữ khách" },
+      { id: 508, name: "Thu hút khách ban đầu & Tạo độ đông" },
+      { id: 509, name: "Vận hành app giao hàng & Tối ưu gian hàng online" },
+      { id: 510, name: "Đóng gói, Bảo quản mang đi & Giao hàng" },
+      { id: 511, name: "Tận dụng công nghệ & Chuyển đổi số bình dân" }
+    ];
+
+    const TAGS_DB5_SEGMENTS = [
+      { id: 301, name: "Học sinh & Sinh viên" },
+      { id: 302, name: "Dân văn phòng / Công sở" },
+      { id: 303, name: "Lao động tự do & Tài xế công nghệ" },
+      { id: 304, name: "Gia đình & Cư dân khu dân cư" },
+      { id: 305, name: "Giới trẻ, Gen Z & Tín đồ la cà" },
+      { id: 306, name: "Dân nhậu & Khách thích tụ tập đêm" },
+      { id: 307, name: "Khách vãng lai & Người đi đường" },
+      { id: 308, name: "Khách trung niên & Người cao tuổi" },
+      { id: 309, name: "Người độc thân & Sống một mình" },
+      { id: 310, name: "Khách mua quà tặng & Dịp đặc biệt" },
+      { id: 311, name: "Khách du lịch & Khách phương xa" },
+      { id: 312, name: "Khách tổ chức sự kiện / Đặt đơn lớn (B2B)" }
+    ];
+
     // State lưu các sản phẩm được chọn trên các tab (mặc định để trống, không điền mẫu)
     const selectedProducts = {
       db2: new Set(),
@@ -673,6 +754,13 @@
       user: new Set()
     };
 
+    // State lưu các tag đặc thù riêng cho DB3, DB4, DB5
+    const selectedSpecialTags = {
+      db3: new Set(),
+      db4: new Set(),
+      db5: new Set()
+    };
+
     // Khởi tạo giao diện
     window.addEventListener("DOMContentLoaded", () => {
       renderProductChips("db2_products_container", "db2");
@@ -680,6 +768,12 @@
       renderProductChips("exp_products_container", "exp");
       renderProductChips("mkt_products_container", "mkt");
       renderProductChips("user_products_container", "user");
+
+      // Khởi tạo các tag đặc thù riêng cho DB3, DB4, DB5
+      renderSpecialTagChips("prob_tags_container", TAGS_DB3_PROBLEMS, selectedSpecialTags.db3, "db3", "active-amber");
+      renderSpecialTagChips("exp_tags_container", TAGS_DB4_EXPERIENCES, selectedSpecialTags.db4, "db4", "active-indigo");
+      renderSpecialTagChips("mkt_tags_container", TAGS_DB5_SEGMENTS, selectedSpecialTags.db5, "db5", "active-blue");
+
       checkBackendHealth();
 
       // Gắn sự kiện lắng nghe để kiểm tra dữ liệu và bật/tắt nút gửi real-time
@@ -732,6 +826,32 @@
       }
       const formKey = prefix === "user" ? "user_plan" : prefix;
       updateFormValidation(formKey);
+    }
+
+    function renderSpecialTagChips(containerId, list, targetSet, dbKey, activeClass) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = list.map(item => {
+        const isSelected = targetSet.has(item.id);
+        return `
+          <button type="button" onclick="toggleSpecialTag('${dbKey}', ${item.id}, this, '${activeClass}')" class="tag-chip px-2.5 py-1 text-xs rounded-full border transition font-medium ${isSelected ? activeClass : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-100'}">
+            [${item.id}] ${item.name}
+          </button>
+        `;
+      }).join("");
+    }
+
+    function toggleSpecialTag(dbKey, tagId, btnElement, activeClass) {
+      if (selectedSpecialTags[dbKey].has(tagId)) {
+        selectedSpecialTags[dbKey].delete(tagId);
+        btnElement.classList.remove(activeClass);
+        btnElement.classList.add("bg-white", "text-slate-600", "border-slate-300");
+      } else {
+        selectedSpecialTags[dbKey].add(tagId);
+        btnElement.classList.add(activeClass);
+        btnElement.classList.remove("bg-white", "text-slate-600", "border-slate-300");
+      }
+      updateFormValidation(dbKey);
     }
 
     // Kiểm tra tính hợp lệ của từng form (chỉ khi có đủ thông tin bắt buộc mới hợp lệ)
@@ -837,6 +957,8 @@
         document.getElementById("prob_model").value = "";
         selectedProducts.prob.clear();
         renderProductChips("prob_products_container", "prob");
+        selectedSpecialTags.db3.clear();
+        renderSpecialTagChips("prob_tags_container", TAGS_DB3_PROBLEMS, selectedSpecialTags.db3, "db3", "active-amber");
       } else if (formType === "db4") {
         document.getElementById("exp_title").value = "";
         document.getElementById("exp_takeaway").value = "";
@@ -847,6 +969,8 @@
         document.getElementById("exp_model").value = "";
         selectedProducts.exp.clear();
         renderProductChips("exp_products_container", "exp");
+        selectedSpecialTags.db4.clear();
+        renderSpecialTagChips("exp_tags_container", TAGS_DB4_EXPERIENCES, selectedSpecialTags.db4, "db4", "active-indigo");
       } else if (formType === "db5") {
         document.getElementById("mkt_segment").value = "";
         document.getElementById("mkt_budget").value = "";
@@ -854,6 +978,8 @@
         document.getElementById("mkt_behavior").value = "";
         selectedProducts.mkt.clear();
         renderProductChips("mkt_products_container", "mkt");
+        selectedSpecialTags.db5.clear();
+        renderSpecialTagChips("mkt_tags_container", TAGS_DB5_SEGMENTS, selectedSpecialTags.db5, "db5", "active-blue");
       } else if (formType === "user_plan") {
         document.getElementById("user_location").value = "";
         document.getElementById("user_model_id").value = "";
@@ -987,7 +1113,10 @@
       // Thuộc tính: tag_ids, title, summary, severity, embedding
       else if (formType === "db3") {
         collectionName = "problems";
-        const tagIds = Array.from(selectedProducts.prob);
+        const tagIds = Array.from(new Set([
+          ...Array.from(selectedSpecialTags.db3),
+          ...Array.from(selectedProducts.prob)
+        ]));
         const chk = document.getElementById("prob_tag_0");
         if (chk && chk.checked) tagIds.unshift(0);
         const modelVal = document.getElementById("prob_model").value;
@@ -1005,7 +1134,10 @@
       // Thuộc tính: tag_ids, title, story, key_takeaway, dialogue_script, embedding
       else if (formType === "db4") {
         collectionName = "experiences";
-        const tagIds = Array.from(selectedProducts.exp);
+        const tagIds = Array.from(new Set([
+          ...Array.from(selectedSpecialTags.db4),
+          ...Array.from(selectedProducts.exp)
+        ]));
         const chk = document.getElementById("exp_tag_0");
         if (chk && chk.checked) tagIds.unshift(0);
         const modelVal = document.getElementById("exp_model").value;
@@ -1024,7 +1156,10 @@
       // Thuộc tính: tag_ids, segment, price_tolerance, peak_traffic, behavior_notes, embedding
       else if (formType === "db5") {
         collectionName = "market_segments";
-        const tagIds = Array.from(selectedProducts.mkt);
+        const tagIds = Array.from(new Set([
+          ...Array.from(selectedSpecialTags.db5),
+          ...Array.from(selectedProducts.mkt)
+        ]));
 
         payload = {
           tag_ids: tagIds,
