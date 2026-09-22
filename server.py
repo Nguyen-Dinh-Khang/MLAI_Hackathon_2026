@@ -23,7 +23,7 @@ STRICT_COLLECTION_SCHEMAS = {
     },
     "competitors": {
         "_id", "name", "location", "business_model_id", "product_ids", 
-        "price_range", "rating", "review_count", "weakness", "is_direct"
+        "price_range", "rating", "review_count", "weakness"
     },
     "problems": {
         "_id", "tag_ids", "title", "summary", "severity"

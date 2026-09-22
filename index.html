@@ -185,7 +185,7 @@
     <!-- ================================================================= -->
     <!-- TAB 2: DB2 - ĐỊA ĐIỂM & ĐỐI THỦ (COMPETITORS)                     -->
     <!-- Thuộc tính: _id, name, location, business_model_id, product_ids,  -->
-    <!--             price_range, rating, review_count, weakness, is_direct -->
+    <!--             price_range, rating, review_count, weakness           -->
     <!-- ================================================================= -->
     <section id="tab-db2" class="tab-content hidden">
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
@@ -201,18 +201,9 @@
         </div>
 
         <form onsubmit="submitForm(event, 'db2')" class="space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="md:col-span-2">
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Tên Quán Đối Thủ (name) *</label>
-              <input type="text" id="db2_name" required placeholder="Ví dụ: Bánh Mì Má Hải - Lý Thường Kiệt" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-rose-500 focus:outline-none">
-            </div>
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Phân Loại (is_direct) *</label>
-              <select id="db2_is_direct" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm font-bold bg-white focus:ring-rose-500">
-                <option value="true" class="text-rose-600 font-bold" selected>🔴 Đối thủ TRỰC TIẾP (is_direct: true)</option>
-                <option value="false" class="text-amber-600 font-bold">🟡 Đối thủ GIÁN TIẾP (is_direct: false)</option>
-              </select>
-            </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Tên Quán Đối Thủ (name) *</label>
+            <input type="text" id="db2_name" required placeholder="Ví dụ: Bánh Mì Má Hải - Lý Thường Kiệt" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-rose-500 focus:outline-none">
           </div>
 
           <!-- Tọa độ quán (GeoJSON Point: location) -->
@@ -812,7 +803,7 @@
         };
       }
       // 2. DB2: ĐỐI THỦ (competitors)
-      // Thuộc tính: name, location, business_model_id, product_ids, price_range, rating, review_count, weakness, is_direct
+      // Thuộc tính: name, location, business_model_id, product_ids, price_range, rating, review_count, weakness
       else if (formType === "db2") {
         collectionName = "competitors";
         const lat = parseFloat(document.getElementById("db2_lat").value);
@@ -829,8 +820,7 @@
           price_range: document.getElementById("db2_price_range").value.trim(),
           rating: parseFloat(document.getElementById("db2_rating").value) || 0,
           review_count: parseInt(document.getElementById("db2_review_count").value) || 0,
-          weakness: document.getElementById("db2_weakness").value.trim(),
-          is_direct: document.getElementById("db2_is_direct").value === "true"
+          weakness: document.getElementById("db2_weakness").value.trim()
         };
       }
       // 3. DB3: VẤN ĐỀ & SỰ CỐ (problems)
@@ -966,7 +956,6 @@
               <div class="text-xs text-rose-800 bg-rose-50 p-2.5 rounded-lg mt-2 space-y-1">
                 <div class="flex flex-wrap gap-3 items-center">
                   <span><i class="fa-solid fa-map-pin text-rose-600"></i> [${coords[0]}, ${coords[1]}]</span>
-                  <span class="font-bold">${doc.is_direct ? '🔴 Trực tiếp' : '🟡 Gián tiếp'}</span>
                   <span><i class="fa-solid fa-tag text-rose-600"></i> Giá: ${doc.price_range}</span>
                   <span><i class="fa-solid fa-star text-amber-500"></i> ${doc.rating}★ (${doc.review_count} reviews)</span>
                   <span>Mô hình: #${doc.business_model_id}</span>
