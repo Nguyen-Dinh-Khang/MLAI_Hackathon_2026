@@ -1,0 +1,18 @@
+[
+  {
+    "_id": "mkt_01",
+    "tag_ids": [301, 204, 201],
+    "segment": "Sinh viên Đại học",
+    "price_tolerance": "18.000 - 30.000 VND",
+    "peak_traffic": "06:45 - 07:30",
+    "behavior_notes": "Mua mang đi vội trước giờ điểm danh ca 1, rất chuộng combo có nước uống kèm để tiết kiệm thời gian ghé 2 quán."
+  },
+  {
+    "_id": "mkt_02",
+    "tag_ids": [302, 201, 202],
+    "segment": "Dân văn phòng trẻ",
+    "price_tolerance": "30.000 - 50.000 VND",
+    "peak_traffic": "07:30 - 08:30",
+    "behavior_notes": "Yêu cầu cao hơn về vệ sinh an toàn thực phẩm, bao bì giấy lịch sự, chuộng thanh toán chuyển khoản QR nhanh."
+  }
+]

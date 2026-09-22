@@ -1,7 +1,7 @@
 """
-server.py - Web Server Mini phục vụ Giao diện Nhập liệu và Nộp dữ liệu lên MongoDB.
-Chạy trực tiếp bằng Python tiêu chuẩn (Zero Dependency) với cơ chế tự động kết nối MongoDB
-hoặc Auto-fallback sang Local JSON Storage nếu chưa cài pymongo / chưa bật MongoDB daemon.
+server.py - Web Server phục vụ Giao diện Nhập liệu và Nộp dữ liệu lên MongoDB.
+Đảm bảo tính chuẩn hóa 100% cho 5 CSDL: areas, competitors, problems, experiences, market_segments.
+Không cho phép lưu bất kỳ trường dư thừa nào ngoài đặc tả.
 """
 
 import os
@@ -10,12 +10,48 @@ import urllib.parse
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from datetime import datetime
 
-# Cấu hình
+# Cấu hình đường dẫn
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 os.makedirs(DATA_DIR, exist_ok=True)
 
-# Tự động đọc file .env mà không cần cài thêm thư viện
+# ĐẶC TẢ THUỘC TÍNH CHUẨN XÁC 100% CHO TỪNG COLLECTION (KHÔNG DƯ TRƯỜNG NÀO)
+STRICT_COLLECTION_SCHEMAS = {
+    "areas": {
+        "_id", "name", "center", "radius_m", "population_density", 
+        "age_distribution", "income_level", "area_type"
+    },
+    "competitors": {
+        "_id", "name", "location", "business_model_id", "product_ids", 
+        "price_range", "rating", "review_count", "weakness", "is_direct"
+    },
+    "problems": {
+        "_id", "tag_ids", "title", "summary", "severity"
+    },
+    "experiences": {
+        "_id", "tag_ids", "title", "story", "key_takeaway", "dialogue_script"
+    },
+    "market_segments": {
+        "_id", "tag_ids", "segment", "price_tolerance", "peak_traffic", "behavior_notes"
+    },
+    "business_requests": {
+        "_id", "location_text", "business_model_id", "product_ids", 
+        "budget", "target_customer", "rent", "notes"
+    }
+}
+
+
+def sanitize_document(collection_name: str, document: dict) -> dict:
+    """
+    Bộ lọc nghiêm ngặt: Loại bỏ 100% các trường nằm ngoài danh sách thuộc tính cho phép.
+    """
+    allowed_fields = STRICT_COLLECTION_SCHEMAS.get(collection_name)
+    if not allowed_fields:
+        return document
+    return {k: v for k, v in document.items() if k in allowed_fields}
+
+
+# Tự động đọc file .env mà không cần cài thêm thư viện ngoài
 def load_env_file():
     env_paths = [
         os.path.join(BASE_DIR, ".env"),
@@ -38,28 +74,30 @@ def load_env_file():
             except Exception as err:
                 print(f"[!] Không thể đọc file .env ({err})")
 
+
 load_env_file()
 
-# Cấu hình sau khi nạp .env
 PORT = int(os.getenv("PORT", 8000))
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 DB_NAME = os.getenv("DB_NAME", "mlai_decision_intelligence")
 mongo_client = None
 mongo_db = None
 
+
 def mask_uri(uri: str) -> str:
-    """Che giấu mật khẩu trong chuỗi URI khi in log bảo mật."""
+    """Che giấu mật khẩu trong URI khi log ra terminal."""
     import re
     return re.sub(r'://([^:]+):([^@]+)@', r'://\1:****@', uri)
 
+
 def setup_database_indexes(db):
-    """Tự động thiết lập Index 2dsphere (Không gian) và Tag Index trên MongoDB."""
+    """Thiết lập Index 2dsphere (Không gian) và Tag Index trên MongoDB."""
     try:
-        # DB1: Index không gian cho Khu vực (bán kính 3km)
+        # DB1: Index không gian cho Khu vực
         db.areas.create_index([("center", "2dsphere")])
-        # DB2: Index không gian cho Đối thủ (bán kính 1km)
+        # DB2: Index không gian cho Đối thủ
         db.competitors.create_index([("location", "2dsphere")])
-        # DB3, DB4, DB5: Index cho mảng số tag_ids ($in)
+        # DB3, DB4, DB5: Index cho mảng số tag_ids
         db.problems.create_index([("tag_ids", 1)])
         db.experiences.create_index([("tag_ids", 1)])
         db.market_segments.create_index([("tag_ids", 1)])
@@ -67,14 +105,14 @@ def setup_database_indexes(db):
     except Exception as idx_err:
         print(f"[!] Cảnh báo tạo index: {idx_err}")
 
+
 def init_mongo_connection():
-    """Khởi tạo hoặc thử kết nối lại MongoDB."""
+    """Khởi tạo hoặc kiểm tra kết nối MongoDB."""
     global mongo_client, mongo_db
     if mongo_db is not None:
         return mongo_db
     try:
         from pymongo import MongoClient
-        # Timeout 5000ms để đảm bảo ổn định trên môi trường Cloud Render
         client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
         client.admin.command('ping')
         mongo_client = client
@@ -87,12 +125,13 @@ def init_mongo_connection():
         print(f"[*] Hệ thống kích hoạt chế độ dự phòng: LOCAL JSON STORAGE tại: {DATA_DIR}")
         return None
 
-# Thử kết nối lần đầu khi bật server
+
+# Kiểm tra kết nối MongoDB khi khởi động
 init_mongo_connection()
 
 
 def save_to_json_fallback(collection_name: str, document: dict) -> str:
-    """Lưu dự phòng dữ liệu vào file JSON cục bộ."""
+    """Lưu dự phòng dữ liệu vào file JSON cục bộ chuẩn hóa."""
     file_path = os.path.join(DATA_DIR, f"{collection_name}.json")
     existing_data = []
     if os.path.exists(file_path):
@@ -102,8 +141,19 @@ def save_to_json_fallback(collection_name: str, document: dict) -> str:
         except Exception:
             existing_data = []
 
-    doc_id = f"loc_{int(datetime.now().timestamp() * 1000)}"
-    document["_id"] = doc_id
+    if "_id" not in document or not document["_id"]:
+        prefix_map = {
+            "areas": "area",
+            "competitors": "comp",
+            "problems": "prob",
+            "experiences": "exp",
+            "market_segments": "mkt",
+            "business_requests": "req"
+        }
+        p = prefix_map.get(collection_name, "doc")
+        document["_id"] = f"{p}_{int(datetime.now().timestamp() * 1000)}"
+
+    doc_id = str(document["_id"])
     existing_data.insert(0, document)
 
     with open(file_path, "w", encoding="utf-8") as f:
@@ -125,7 +175,7 @@ def get_from_json_fallback(collection_name: str) -> list:
 
 
 class MLAIHttpHandler(BaseHTTPRequestHandler):
-    """Bộ xử lý HTTP Request phục vụ HTML và REST API."""
+    """Bộ xử lý HTTP Request phục vụ HTML và REST API chuẩn."""
 
     def _set_json_headers(self, status_code=200):
         self.send_response(status_code)
@@ -175,7 +225,6 @@ class MLAIHttpHandler(BaseHTTPRequestHandler):
 
             db = init_mongo_connection()
             docs = []
-            # Nếu có kết nối MongoDB thật
             if db is not None:
                 try:
                     cursor = db[col_name].find().sort("_id", -1).limit(50)
@@ -207,7 +256,10 @@ class MLAIHttpHandler(BaseHTTPRequestHandler):
                 data = json.loads(post_body.decode('utf-8'))
 
                 collection_name = data.get("collection", "general")
-                document = data.get("document", {})
+                raw_document = data.get("document", {})
+
+                # LỌC NGHIÊM NGẶT THEO ĐẶC TẢ (KHÔNG CHO PHÉP DƯ BẤT KỲ TRƯỜNG NÀO)
+                document = sanitize_document(collection_name, raw_document)
 
                 inserted_id = None
                 storage_target = "Local JSON Storage"
@@ -224,7 +276,7 @@ class MLAIHttpHandler(BaseHTTPRequestHandler):
                         print(f"[!] MongoDB Error ({m_err}), chuyển sang lưu file JSON...")
                         inserted_id = save_to_json_fallback(collection_name, document)
                 else:
-                    # 2. Lưu vào file JSON
+                    # 2. Lưu vào file JSON cục bộ
                     inserted_id = save_to_json_fallback(collection_name, document)
                     print(f"[OK] Đã lưu vào JSON fallback '{collection_name}': {inserted_id}")
 

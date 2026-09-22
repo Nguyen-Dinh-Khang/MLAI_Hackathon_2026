@@ -15,9 +15,9 @@
       "over_50": 0.12
     },
     "income_level": "medium_low",
-    "area_type": ["university_hub", "residential_dense", "commercial"],
-    "source": "Thống kê Dân cư 2025",
-    "report_year": 2025,
-    "created_at": "2026-09-21T20:00:00.000Z"
+    "area_type": [
+      "university_hub",
+      "residential_dense"
+    ]
   }
 ]
