@@ -280,7 +280,7 @@
 
     <!-- ================================================================= -->
     <!-- TAB 3: DB3 - VẤN ĐỀ & RỦI RO (PROBLEMS)                            -->
-    <!-- Thuộc tính: _id, tag_ids, title, summary, severity               -->
+    <!-- Thuộc tính: _id, tag_ids, title, summary, severity, embedding       -->
     <!-- ================================================================= -->
     <section id="tab-db3" class="tab-content hidden">
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
@@ -369,7 +369,7 @@
     <!-- ================================================================= -->
     <!-- TAB 4: DB4 - BÀI HỌC KINH NGHIỆM (EXPERIENCES)                    -->
     <!-- Thuộc tính: _id, tag_ids, title, story, key_takeaway,             -->
-    <!--             dialogue_script                                       -->
+    <!--             dialogue_script, embedding                            -->
     <!-- ================================================================= -->
     <section id="tab-db4" class="tab-content hidden">
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
@@ -457,7 +457,7 @@
     <!-- ================================================================= -->
     <!-- TAB 5: DB5 - THỊ TRƯỜNG & KHÁCH HÀNG (MARKET_SEGMENTS)           -->
     <!-- Thuộc tính: _id, tag_ids, segment, price_tolerance,               -->
-    <!--             peak_traffic, behavior_notes                          -->
+    <!--             peak_traffic, behavior_notes, embedding               -->
     <!-- ================================================================= -->
     <section id="tab-db5" class="tab-content hidden">
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
@@ -984,7 +984,7 @@
         };
       }
       // 3. DB3: VẤN ĐỀ & SỰ CỐ (problems)
-      // Thuộc tính: tag_ids, title, summary, severity
+      // Thuộc tính: tag_ids, title, summary, severity, embedding
       else if (formType === "db3") {
         collectionName = "problems";
         const tagIds = Array.from(selectedProducts.prob);
@@ -997,11 +997,12 @@
           tag_ids: tagIds,
           title: document.getElementById("prob_title").value.trim(),
           summary: document.getElementById("prob_summary").value.trim(),
-          severity: document.getElementById("prob_severity").value
+          severity: document.getElementById("prob_severity").value,
+          embedding: []
         };
       }
       // 4. DB4: KINH NGHIỆM XƯƠNG MÁU (experiences)
-      // Thuộc tính: tag_ids, title, story, key_takeaway, dialogue_script
+      // Thuộc tính: tag_ids, title, story, key_takeaway, dialogue_script, embedding
       else if (formType === "db4") {
         collectionName = "experiences";
         const tagIds = Array.from(selectedProducts.exp);
@@ -1015,11 +1016,12 @@
           title: document.getElementById("exp_title").value.trim(),
           story: document.getElementById("exp_story").value.trim(),
           key_takeaway: document.getElementById("exp_takeaway").value.trim(),
-          dialogue_script: document.getElementById("exp_dialogue_script").value.trim()
+          dialogue_script: document.getElementById("exp_dialogue_script").value.trim(),
+          embedding: []
         };
       }
       // 5. DB5: THỊ TRƯỜNG & HÀNH VI (market_segments)
-      // Thuộc tính: tag_ids, segment, price_tolerance, peak_traffic, behavior_notes
+      // Thuộc tính: tag_ids, segment, price_tolerance, peak_traffic, behavior_notes, embedding
       else if (formType === "db5") {
         collectionName = "market_segments";
         const tagIds = Array.from(selectedProducts.mkt);
@@ -1029,7 +1031,8 @@
           segment: document.getElementById("mkt_segment").value.trim(),
           price_tolerance: document.getElementById("mkt_budget").value.trim(),
           peak_traffic: document.getElementById("mkt_peak").value.trim(),
-          behavior_notes: document.getElementById("mkt_behavior").value.trim()
+          behavior_notes: document.getElementById("mkt_behavior").value.trim(),
+          embedding: []
         };
       }
       // 6. USER PLAN (business_requests)

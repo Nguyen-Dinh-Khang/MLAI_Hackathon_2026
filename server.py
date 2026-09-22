@@ -36,13 +36,13 @@ STRICT_COLLECTION_SCHEMAS = {
         "price_range", "rating", "review_count", "weakness"
     },
     "problems": {
-        "_id", "tag_ids", "title", "summary", "severity"
+        "_id", "tag_ids", "title", "summary", "severity", "embedding"
     },
     "experiences": {
-        "_id", "tag_ids", "title", "story", "key_takeaway", "dialogue_script"
+        "_id", "tag_ids", "title", "story", "key_takeaway", "dialogue_script", "embedding"
     },
     "market_segments": {
-        "_id", "tag_ids", "segment", "price_tolerance", "peak_traffic", "behavior_notes"
+        "_id", "tag_ids", "segment", "price_tolerance", "peak_traffic", "behavior_notes", "embedding"
     },
     "business_requests": {
         "_id", "location_text", "business_model_id", "product_ids", 
@@ -270,6 +270,11 @@ class MLAIHttpHandler(BaseHTTPRequestHandler):
 
                 # LỌC NGHIÊM NGẶT THEO ĐẶC TẢ (KHÔNG CHO PHÉP DƯ BẤT KỲ TRƯỜNG NÀO)
                 document = sanitize_document(collection_name, raw_document)
+
+                # Mặc định embedding là mảng rỗng cho DB3, DB4, DB5
+                if collection_name in ["problems", "experiences", "market_segments"]:
+                    if "embedding" not in document or not isinstance(document.get("embedding"), list):
+                        document["embedding"] = []
 
                 inserted_id = None
                 storage_target = "Local JSON Storage"

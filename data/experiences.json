@@ -5,7 +5,8 @@
     "title": "Tối ưu tốc độ xuất đơn bánh mì dưới 60 giây",
     "story": "Chủ xe bánh mì chia sẻ: Sinh viên chỉ có 10-15 phút trước giờ điểm danh, nếu chờ quá 90 giây họ sẽ bỏ đi...",
     "key_takeaway": "Sơ chế sẵn nhân trước 05:45; chia 1 người kẹp bánh riêng, 1 người đóng gói thu tiền để giữ thời gian ra món dưới 60 giây.",
-    "dialogue_script": "Nói với nhân viên: 'Em chỉ việc nướng và kẹp bánh, tiền để anh cầm, không được để khách chờ quá 1 phút'."
+    "dialogue_script": "Nói với nhân viên: 'Em chỉ việc nướng và kẹp bánh, tiền để anh cầm, không được để khách chờ quá 1 phút'.",
+    "embedding": []
   },
   {
     "_id": "exp_02",
@@ -13,6 +14,7 @@
     "title": "Bắt buộc dự phòng tiền mặt trả chi phí 3 tháng",
     "story": "Rất nhiều quán chết ở tháng thứ 2-3 vì dùng hết tiền vốn vào decor quán mà không để dành tiền bù lỗ thời gian đầu.",
     "key_takeaway": "Giữ lại tối thiểu 20-30% tổng vốn làm quỹ tiền mặt khẩn cấp chi trả tiền thuê và nhân viên trong 3 tháng đầu.",
-    "dialogue_script": "Tự nhắc nhở: 'Doanh thu tháng đầu chưa phải là lợi nhuận, tuyệt đối không tiêu lẹm vào quỹ tiền mặt dự phòng'."
+    "dialogue_script": "Tự nhắc nhở: 'Doanh thu tháng đầu chưa phải là lợi nhuận, tuyệt đối không tiêu lẹm vào quỹ tiền mặt dự phòng'.",
+    "embedding": []
   }
 ]
