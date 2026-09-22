@@ -89,18 +89,18 @@
             </h2>
             <p class="text-xs text-slate-500 mt-1">Collection: <code class="bg-slate-100 px-1 py-0.5 rounded text-indigo-600 font-mono">areas</code> (Chỉ mục 2dsphere)</p>
           </div>
-          <span class="px-3 py-1 bg-cyan-50 text-cyan-700 border border-cyan-200 text-xs font-semibold rounded-full">Bán kính 3.0 km</span>
+          <span class="px-3 py-1 bg-cyan-50 text-cyan-700 border border-cyan-200 text-xs font-semibold rounded-full">Chỉ mục 2dsphere</span>
         </div>
 
-        <form onsubmit="submitForm(event, 'db1')" class="space-y-6">
+        <form id="form_db1" onsubmit="submitForm(event, 'db1')" class="space-y-6">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="md:col-span-2">
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Tên Khu Vực Khảo Sát (name) *</label>
-              <input type="text" id="db1_name" required placeholder="Ví dụ: Khu vực ĐH Bách Khoa - Tô Hiến Thành, Quận 10" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-cyan-500 focus:outline-none">
+              <input type="text" id="db1_name" required placeholder="Nhập tên khu vực khảo sát..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-cyan-500 focus:outline-none">
             </div>
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Bán Kính Phân Tích (radius_m)</label>
-              <input type="number" id="db1_radius" value="3000" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-cyan-500 focus:outline-none">
+              <input type="number" id="db1_radius" value="0" placeholder="0" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-cyan-500 focus:outline-none">
             </div>
           </div>
 
@@ -110,18 +110,15 @@
               <label class="text-xs font-bold uppercase tracking-wider text-cyan-900 flex items-center gap-1.5">
                 <i class="fa-solid fa-location-crosshairs text-cyan-600"></i> Tọa Độ Tâm Khu Vực (center: Point [lng, lat]) *
               </label>
-              <button type="button" onclick="fillSampleCoords('db1')" class="text-xs text-cyan-700 hover:text-cyan-900 font-semibold underline">
-                Điền mẫu: ĐH Bách Khoa TP.HCM
-              </button>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <span class="text-xs text-slate-600 font-medium block mb-1">Vĩ độ (Latitude, vd: 10.7721):</span>
-                <input type="number" step="any" id="db1_lat" required placeholder="10.7721" class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-cyan-500">
+                <span class="text-xs text-slate-600 font-medium block mb-1">Vĩ độ (Latitude) *:</span>
+                <input type="number" step="any" id="db1_lat" required placeholder="0.0" class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-cyan-500">
               </div>
               <div>
-                <span class="text-xs text-slate-600 font-medium block mb-1">Kinh độ (Longitude, vd: 106.6578):</span>
-                <input type="number" step="any" id="db1_lng" required placeholder="106.6578" class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-cyan-500">
+                <span class="text-xs text-slate-600 font-medium block mb-1">Kinh độ (Longitude) *:</span>
+                <input type="number" step="any" id="db1_lng" required placeholder="0.0" class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-cyan-500">
               </div>
             </div>
           </div>
@@ -130,12 +127,14 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Mật Độ Dân Số (population_density: người / km²)</label>
-              <input type="number" id="db1_pop_density" placeholder="Ví dụ: 28500" value="28500" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-cyan-500">
+              <input type="number" id="db1_pop_density" placeholder="0" value="0" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-cyan-500">
             </div>
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Mức Thu Nhập (income_level)</label>
               <select id="db1_income" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:ring-cyan-500">
-                <option value="medium_low" selected>medium_low (Trung bình - Thấp)</option>
+                <option value="" selected>-- Chọn mức thu nhập --</option>
+                <option value="low">low (Thấp)</option>
+                <option value="medium_low">medium_low (Trung bình - Thấp)</option>
                 <option value="medium">medium (Trung bình)</option>
                 <option value="medium_high">medium_high (Trung bình - Cao)</option>
                 <option value="high">high (Cao)</option>
@@ -151,30 +150,31 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div>
                 <span class="text-xs text-slate-600 font-medium block mb-1">18 - 24 tuổi (%):</span>
-                <input type="number" id="db1_age_18_24" value="42" min="0" max="100" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-sm text-center font-semibold bg-white">
+                <input type="number" id="db1_age_18_24" value="0" min="0" max="100" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-sm text-center font-semibold bg-white">
               </div>
               <div>
                 <span class="text-xs text-slate-600 font-medium block mb-1">25 - 34 tuổi (%):</span>
-                <input type="number" id="db1_age_25_34" value="28" min="0" max="100" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-sm text-center font-semibold bg-white">
+                <input type="number" id="db1_age_25_34" value="0" min="0" max="100" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-sm text-center font-semibold bg-white">
               </div>
               <div>
                 <span class="text-xs text-slate-600 font-medium block mb-1">35 - 50 tuổi (%):</span>
-                <input type="number" id="db1_age_35_50" value="18" min="0" max="100" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-sm text-center font-semibold bg-white">
+                <input type="number" id="db1_age_35_50" value="0" min="0" max="100" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-sm text-center font-semibold bg-white">
               </div>
               <div>
                 <span class="text-xs text-slate-600 font-medium block mb-1">Trên 50 tuổi (%):</span>
-                <input type="number" id="db1_age_over_50" value="12" min="0" max="100" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-sm text-center font-semibold bg-white">
+                <input type="number" id="db1_age_over_50" value="0" min="0" max="100" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-sm text-center font-semibold bg-white">
               </div>
             </div>
           </div>
 
           <div>
             <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Đặc Trưng Khu Vực (area_type: phân cách bằng dấu phẩy)</label>
-            <input type="text" id="db1_area_types" placeholder="university_hub, residential_dense" value="university_hub, residential_dense" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm">
+            <input type="text" id="db1_area_types" placeholder="Nhập các đặc trưng khu vực, phân cách bằng dấu phẩy..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm">
           </div>
 
-          <div class="flex justify-end pt-2">
-            <button type="submit" class="px-6 py-2.5 bg-cyan-700 hover:bg-cyan-800 text-white font-medium rounded-lg text-sm transition flex items-center gap-2 shadow">
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+            <span id="hint_db1" class="text-xs text-slate-400 italic">Vui lòng điền đủ các trường bắt buộc (*)</span>
+            <button type="submit" id="btn_submit_db1" disabled class="px-6 py-2.5 bg-cyan-700 hover:bg-cyan-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-cyan-700 text-white font-medium rounded-lg text-sm transition flex items-center gap-2 shadow">
               <i class="fa-solid fa-cloud-arrow-up"></i> Nộp Khu Vực (DB1) Lên MongoDB
             </button>
           </div>
@@ -197,13 +197,13 @@
             </h2>
             <p class="text-xs text-slate-500 mt-1">Collection: <code class="bg-slate-100 px-1 py-0.5 rounded text-indigo-600 font-mono">competitors</code> (Chỉ mục 2dsphere)</p>
           </div>
-          <span class="px-3 py-1 bg-rose-50 text-rose-700 border border-rose-200 text-xs font-semibold rounded-full">Bán kính 1.0 km</span>
+          <span class="px-3 py-1 bg-rose-50 text-rose-700 border border-rose-200 text-xs font-semibold rounded-full">Chỉ mục 2dsphere</span>
         </div>
 
-        <form onsubmit="submitForm(event, 'db2')" class="space-y-6">
+        <form id="form_db2" onsubmit="submitForm(event, 'db2')" class="space-y-6">
           <div>
             <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Tên Quán Đối Thủ (name) *</label>
-            <input type="text" id="db2_name" required placeholder="Ví dụ: Bánh Mì Má Hải - Lý Thường Kiệt" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-rose-500 focus:outline-none">
+            <input type="text" id="db2_name" required placeholder="Nhập tên quán đối thủ..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-rose-500 focus:outline-none">
           </div>
 
           <!-- Tọa độ quán (GeoJSON Point: location) -->
@@ -212,18 +212,15 @@
               <label class="text-xs font-bold uppercase tracking-wider text-rose-900 flex items-center gap-1.5">
                 <i class="fa-solid fa-map-pin text-rose-600"></i> Tọa Độ Địa Điểm Đối Thủ (location: Point [lng, lat]) *
               </label>
-              <button type="button" onclick="fillSampleCoords('db2')" class="text-xs text-rose-700 hover:text-rose-900 font-semibold underline">
-                Điền mẫu cách 150m
-              </button>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <span class="text-xs text-slate-600 font-medium block mb-1">Vĩ độ (Latitude, vd: 10.7730):</span>
-                <input type="number" step="any" id="db2_lat" required placeholder="10.7730" class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-rose-500">
+                <span class="text-xs text-slate-600 font-medium block mb-1">Vĩ độ (Latitude) *:</span>
+                <input type="number" step="any" id="db2_lat" required placeholder="0.0" class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-rose-500">
               </div>
               <div>
-                <span class="text-xs text-slate-600 font-medium block mb-1">Kinh độ (Longitude, vd: 106.6582):</span>
-                <input type="number" step="any" id="db2_lng" required placeholder="106.6582" class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-rose-500">
+                <span class="text-xs text-slate-600 font-medium block mb-1">Kinh độ (Longitude) *:</span>
+                <input type="number" step="any" id="db2_lng" required placeholder="0.0" class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-rose-500">
               </div>
             </div>
           </div>
@@ -231,13 +228,14 @@
           <!-- Mô hình & Mức giá & Đánh giá -->
           <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Mô hình (business_model_id)</label>
-              <select id="db2_model_id" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Mô hình (business_model_id) *</label>
+              <select id="db2_model_id" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white">
+                <option value="" selected>-- Chọn mô hình --</option>
                 <option value="101">[101] Quán ăn sáng</option>
                 <option value="102">[102] Quán nước / Cà phê</option>
                 <option value="103">[103] Quán cơm / Nhà hàng nhỏ</option>
                 <option value="104">[104] Quán nhậu / Ăn vặt</option>
-                <option value="105" selected>[105] Kiosk / Xe đẩy mang đi</option>
+                <option value="105">[105] Kiosk / Xe đẩy mang đi</option>
                 <option value="106">[106] Tạp hóa / Đại lý</option>
                 <option value="107">[107] Cửa hàng chuyên doanh</option>
                 <option value="108">[108] Dịch vụ làm đẹp / Spa</option>
@@ -247,15 +245,15 @@
             </div>
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Khoảng giá (price_range)</label>
-              <input type="text" id="db2_price_range" placeholder="18.000 - 25.000 VND" value="18.000 - 25.000 VND" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm">
+              <input type="text" id="db2_price_range" placeholder="Nhập khoảng giá (vd: 20.000 - 50.000 VND)..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm">
             </div>
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Đánh giá (rating 1-5★)</label>
-              <input type="number" step="0.1" min="1" max="5" id="db2_rating" value="4.5" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-bold text-center">
+              <input type="number" step="0.1" min="0" max="5" id="db2_rating" value="0" placeholder="0" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-bold text-center">
             </div>
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Số review (review_count)</label>
-              <input type="number" id="db2_review_count" value="120" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm text-center">
+              <input type="number" id="db2_review_count" value="0" placeholder="0" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm text-center">
             </div>
           </div>
 
@@ -267,11 +265,12 @@
 
           <div>
             <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Điểm yếu đối thủ (weakness) *</label>
-            <input type="text" id="db2_weakness" required placeholder="Ví dụ: Không có nước uống kèm, bao bì nilon đơn sơ, phục vụ chậm > 5 phút." value="Không có nước uống kèm, bao bì nilon đơn sơ" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-rose-500">
+            <input type="text" id="db2_weakness" required placeholder="Nhập điểm yếu của quán đối thủ..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-rose-500">
           </div>
 
-          <div class="flex justify-end pt-2">
-            <button type="submit" class="px-6 py-2.5 bg-rose-700 hover:bg-rose-800 text-white font-medium rounded-lg text-sm transition flex items-center gap-2 shadow">
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+            <span id="hint_db2" class="text-xs text-slate-400 italic">Vui lòng điền đủ các trường bắt buộc (*)</span>
+            <button type="submit" id="btn_submit_db2" disabled class="px-6 py-2.5 bg-rose-700 hover:bg-rose-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-rose-700 text-white font-medium rounded-lg text-sm transition flex items-center gap-2 shadow">
               <i class="fa-solid fa-cloud-arrow-up"></i> Nộp Đối Thủ (DB2) Lên MongoDB
             </button>
           </div>
@@ -296,16 +295,17 @@
           <span class="px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200 text-xs font-medium rounded-full">Tag-Indexed</span>
         </div>
 
-        <form onsubmit="submitForm(event, 'db3')" class="space-y-6">
+        <form id="form_db3" onsubmit="submitForm(event, 'db3')" class="space-y-6">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="md:col-span-2">
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Tên Vấn Đề / Rủi Ro (title) *</label>
-              <input type="text" id="prob_title" required placeholder="Ví dụ: Biến động giá nguyên liệu thịt nguội và pate sau 3 tháng" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+              <input type="text" id="prob_title" required placeholder="Nhập tên vấn đề / rủi ro..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
             </div>
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Mức Độ Nghiêm Trọng (severity) *</label>
-              <select id="prob_severity" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm font-bold bg-white focus:ring-amber-500">
-                <option value="HIGH" class="text-red-600 font-bold" selected>HIGH (Cao - Nguy cơ đứt gãy dòng tiền)</option>
+              <select id="prob_severity" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm font-bold bg-white focus:ring-amber-500">
+                <option value="" selected>-- Chọn mức độ nghiêm trọng --</option>
+                <option value="HIGH" class="text-red-600 font-bold">HIGH (Cao - Nguy cơ đứt gãy dòng tiền)</option>
                 <option value="MEDIUM" class="text-amber-600 font-bold">MEDIUM (Trung bình - Ảnh hưởng lợi nhuận)</option>
                 <option value="LOW" class="text-blue-600 font-bold">LOW (Thấp - Lỗi vận hành nhỏ)</option>
               </select>
@@ -314,7 +314,7 @@
 
           <div>
             <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Tóm Tắt Ngắn Gọn (summary) *</label>
-            <textarea id="prob_summary" required rows="2" placeholder="Ví dụ: Giá thịt tăng 15-20% làm đứt dòng tiền của xe bánh mì nếu không ký giá sỉ cố định." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+            <textarea id="prob_summary" required rows="2" placeholder="Nhập mô tả tóm tắt ngắn gọn..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
           </div>
 
           <!-- Section Chọn Tags cho DB3 (tag_ids) -->
@@ -335,12 +335,12 @@
             <div>
               <label class="block text-xs font-medium text-slate-700 mb-1">Mô hình kinh doanh liên quan:</label>
               <select id="prob_model" class="w-full md:w-1/2 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-amber-500">
-                <option value="">-- Mọi mô hình hoặc không chọn --</option>
+                <option value="" selected>-- Mọi mô hình hoặc không chọn --</option>
                 <option value="101">[101] Quán ăn sáng</option>
                 <option value="102">[102] Quán nước / Cà phê</option>
                 <option value="103">[103] Quán cơm / Nhà hàng nhỏ</option>
                 <option value="104">[104] Quán nhậu / Ăn vặt</option>
-                <option value="105" selected>[105] Kiosk / Xe đẩy mang đi</option>
+                <option value="105">[105] Kiosk / Xe đẩy mang đi</option>
                 <option value="106">[106] Cửa hàng tạp hóa / Đại lý</option>
                 <option value="107">[107] Cửa hàng chuyên doanh bán lẻ</option>
                 <option value="108">[108] Tiệm dịch vụ làm đẹp / Spa</option>
@@ -356,8 +356,9 @@
             </div>
           </div>
 
-          <div class="flex justify-end pt-2">
-            <button type="submit" class="px-6 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg text-sm transition flex items-center gap-2 shadow">
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+            <span id="hint_db3" class="text-xs text-slate-400 italic">Vui lòng điền đủ các trường bắt buộc (*)</span>
+            <button type="submit" id="btn_submit_db3" disabled class="px-6 py-2.5 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-amber-600 text-white font-medium rounded-lg text-sm transition flex items-center gap-2 shadow">
               <i class="fa-solid fa-cloud-arrow-up"></i> Nộp Vấn Đề (DB3) Lên MongoDB
             </button>
           </div>
@@ -383,25 +384,25 @@
           <span class="px-3 py-1 bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-medium rounded-full">Tag-Indexed</span>
         </div>
 
-        <form onsubmit="submitForm(event, 'db4')" class="space-y-6">
+        <form id="form_db4" onsubmit="submitForm(event, 'db4')" class="space-y-6">
           <div>
             <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Tiêu Đề Bài Học (title) *</label>
-            <input type="text" id="exp_title" required placeholder="Ví dụ: Tối ưu tốc độ xuất đơn bánh mì dưới 60 giây" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            <input type="text" id="exp_title" required placeholder="Nhập tiêu đề bài học kinh nghiệm..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
           </div>
 
           <div>
             <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Đúc Kết Rút Ra (key_takeaway - Hành động cốt lõi) *</label>
-            <textarea id="exp_takeaway" required rows="2" placeholder="Ví dụ: Sơ chế sẵn nhân trước 05:45; chia 1 người kẹp bánh riêng, 1 người đóng gói thu tiền để giữ thời gian ra món dưới 60 giây." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+            <textarea id="exp_takeaway" required rows="2" placeholder="Nhập đúc kết rút ra (hành động cốt lõi)..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
           </div>
 
           <div>
             <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Câu Chuyện Thực Tế / Bối Cảnh (story)</label>
-            <textarea id="exp_story" rows="2" placeholder="Ví dụ: Chủ xe bánh mì chia sẻ: Sinh viên chỉ có 10-15 phút trước giờ điểm danh, nếu chờ quá 90 giây họ sẽ bỏ đi..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+            <textarea id="exp_story" rows="2" placeholder="Nhập câu chuyện thực tế / bối cảnh (nếu có)..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
           </div>
 
           <div>
             <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Câu Thoại / Kịch Bản Đối Thoại Mẫu (dialogue_script)</label>
-            <textarea id="exp_dialogue_script" rows="2" placeholder="Ví dụ: Nói với nhân viên: 'Em chỉ việc nướng và kẹp bánh, tiền để anh cầm, không được để khách chờ quá 1 phút'." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+            <textarea id="exp_dialogue_script" rows="2" placeholder="Nhập câu thoại / kịch bản đối thoại mẫu (nếu có)..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
           </div>
 
           <!-- Section Chọn Tags cho DB4 (tag_ids) -->
@@ -422,12 +423,12 @@
             <div>
               <label class="block text-xs font-medium text-slate-700 mb-1">Mô hình kinh doanh liên quan:</label>
               <select id="exp_model" class="w-full md:w-1/2 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-indigo-500">
-                <option value="">-- Áp dụng chung hoặc không chọn --</option>
+                <option value="" selected>-- Áp dụng chung hoặc không chọn --</option>
                 <option value="101">[101] Quán ăn sáng</option>
                 <option value="102">[102] Quán nước / Cà phê</option>
                 <option value="103">[103] Quán cơm / Nhà hàng nhỏ</option>
                 <option value="104">[104] Quán nhậu / Ăn vặt</option>
-                <option value="105" selected>[105] Kiosk / Xe đẩy mang đi</option>
+                <option value="105">[105] Kiosk / Xe đẩy mang đi</option>
                 <option value="106">[106] Cửa hàng tạp hóa / Đại lý</option>
                 <option value="107">[107] Cửa hàng chuyên doanh bán lẻ</option>
                 <option value="108">[108] Tiệm dịch vụ làm đẹp / Spa</option>
@@ -443,8 +444,9 @@
             </div>
           </div>
 
-          <div class="flex justify-end pt-2">
-            <button type="submit" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-sm transition flex items-center gap-2 shadow">
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+            <span id="hint_db4" class="text-xs text-slate-400 italic">Vui lòng điền đủ các trường bắt buộc (*)</span>
+            <button type="submit" id="btn_submit_db4" disabled class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-indigo-600 text-white font-medium rounded-lg text-sm transition flex items-center gap-2 shadow">
               <i class="fa-solid fa-cloud-arrow-up"></i> Nộp Bài Học (DB4) Lên MongoDB
             </button>
           </div>
@@ -470,25 +472,25 @@
           <span class="px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200 text-xs font-medium rounded-full">Tag-Indexed</span>
         </div>
 
-        <form onsubmit="submitForm(event, 'db5')" class="space-y-6">
+        <form id="form_db5" onsubmit="submitForm(event, 'db5')" class="space-y-6">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Phân Khúc Khách Hàng (segment) *</label>
-              <input type="text" id="mkt_segment" required placeholder="Ví dụ: Sinh viên Đại học" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+              <input type="text" id="mkt_segment" required placeholder="Nhập phân khúc khách hàng..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
             </div>
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Mức Chi Trả / Suất (price_tolerance) *</label>
-              <input type="text" id="mkt_budget" required placeholder="Ví dụ: 18.000 - 30.000 VND" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+              <input type="text" id="mkt_budget" required placeholder="Nhập mức chi trả / suất..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
             </div>
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Khung Giờ Cao Điểm (peak_traffic) *</label>
-              <input type="text" id="mkt_peak" required placeholder="Ví dụ: 06:45 - 07:30" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+              <input type="text" id="mkt_peak" required placeholder="Nhập khung giờ cao điểm..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
             </div>
           </div>
 
           <div>
             <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Thói Quen & Hành Vi Tiêu Dùng (behavior_notes) *</label>
-            <textarea id="mkt_behavior" required rows="2" placeholder="Ví dụ: Mua mang đi vội trước giờ điểm danh ca 1; rất thích combo có nước uống kèm để tiết kiệm thời gian ghé 2 quán." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+            <textarea id="mkt_behavior" required rows="2" placeholder="Nhập thói quen & hành vi tiêu dùng..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
           </div>
 
           <!-- Section Chọn Tags cho DB5 (tag_ids) -->
@@ -502,8 +504,9 @@
             </div>
           </div>
 
-          <div class="flex justify-end pt-2">
-            <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm transition flex items-center gap-2 shadow">
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+            <span id="hint_db5" class="text-xs text-slate-400 italic">Vui lòng điền đủ các trường bắt buộc (*)</span>
+            <button type="submit" id="btn_submit_db5" disabled class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600 text-white font-medium rounded-lg text-sm transition flex items-center gap-2 shadow">
               <i class="fa-solid fa-cloud-arrow-up"></i> Nộp Thị Trường (DB5) Lên MongoDB
             </button>
           </div>
@@ -528,22 +531,22 @@
           <span class="px-3 py-1 bg-purple-50 text-purple-700 border border-purple-200 text-xs font-medium rounded-full">Test End-to-End</span>
         </div>
 
-        <form onsubmit="submitForm(event, 'user_plan')" class="space-y-6">
+        <form id="form_user_plan" onsubmit="submitForm(event, 'user_plan')" class="space-y-6">
           <div>
             <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Địa Chỉ Dự Kiến Mở Quán (location_text) *</label>
-            <input type="text" id="user_location" required placeholder="Ví dụ: Cổng trường ĐH Bách Khoa, đường Tô Hiến Thành, Quận 10" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none">
+            <input type="text" id="user_location" required placeholder="Nhập địa chỉ dự kiến mở quán..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none">
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Mô hình kinh doanh (business_model_id) *</label>
               <select id="user_model_id" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:ring-purple-500">
-                <option value="">-- Chọn 1 trong 10 mô hình --</option>
+                <option value="" selected>-- Chọn 1 trong 10 mô hình --</option>
                 <option value="101">[101] Quán ăn sáng</option>
                 <option value="102">[102] Quán nước / Cà phê</option>
                 <option value="103">[103] Quán cơm / Nhà hàng nhỏ</option>
                 <option value="104">[104] Quán nhậu / Ăn vặt</option>
-                <option value="105" selected>[105] Kiosk / Xe đẩy mang đi</option>
+                <option value="105">[105] Kiosk / Xe đẩy mang đi</option>
                 <option value="106">[106] Cửa hàng tạp hóa / Đại lý</option>
                 <option value="107">[107] Cửa hàng chuyên doanh bán lẻ</option>
                 <option value="108">[108] Tiệm dịch vụ làm đẹp / Spa</option>
@@ -553,7 +556,7 @@
             </div>
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Số Vốn Đầu Tư (budget: VND) *</label>
-              <input type="number" id="user_budget" required value="300000000" placeholder="Ví dụ: 300000000" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none">
+              <input type="number" id="user_budget" required value="0" placeholder="0" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none">
             </div>
           </div>
 
@@ -566,7 +569,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Chi Phí Thuê Mặt Bằng / Tháng (rent: VND)</label>
-              <input type="number" id="user_rent" placeholder="Để trống nếu chưa biết -> null" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none">
+              <input type="number" id="user_rent" placeholder="0 (để trống nếu chưa rõ -> null)" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none">
               <span class="text-xs text-slate-400">Nếu để trống, hệ thống sẽ tự gắn cờ RỦI RO và yêu cầu khảo sát 30 ngày.</span>
             </div>
             <div>
@@ -577,11 +580,12 @@
 
           <div>
             <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Ghi Chú Mở Rộng (notes: Mô tả món cụ thể, giờ mở...)</label>
-            <textarea id="user_notes" rows="2" placeholder="Ví dụ: Bán bánh mì que thịt nướng và cà phê muối mang đi, mở từ 06:00 sáng, ưu tiên phục vụ siêu tốc." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none"></textarea>
+            <textarea id="user_notes" rows="2" placeholder="Nhập ghi chú mở rộng (nếu có)..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none"></textarea>
           </div>
 
-          <div class="flex justify-end pt-2">
-            <button type="submit" class="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg text-sm transition flex items-center gap-2 shadow">
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+            <span id="hint_user_plan" class="text-xs text-slate-400 italic">Vui lòng điền đủ (*) và chọn 1-3 nhóm sản phẩm</span>
+            <button type="submit" id="btn_submit_user_plan" disabled class="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-purple-600 text-white font-medium rounded-lg text-sm transition flex items-center gap-2 shadow">
               <i class="fa-solid fa-paper-plane"></i> Lưu Kế Hoạch Lên MongoDB
             </button>
           </div>
@@ -660,13 +664,13 @@
       { id: 220, slug: "sua_chua_xe_may", name: "Sửa xe máy" }
     ];
 
-    // State lưu các sản phẩm được chọn trên các tab
+    // State lưu các sản phẩm được chọn trên các tab (mặc định để trống, không điền mẫu)
     const selectedProducts = {
-      db2: new Set([204]),
-      prob: new Set([204]),
-      exp: new Set([204]),
-      mkt: new Set([204, 201]),
-      user: new Set([204, 201])
+      db2: new Set(),
+      prob: new Set(),
+      exp: new Set(),
+      mkt: new Set(),
+      user: new Set()
     };
 
     // Khởi tạo giao diện
@@ -677,6 +681,26 @@
       renderProductChips("mkt_products_container", "mkt");
       renderProductChips("user_products_container", "user");
       checkBackendHealth();
+
+      // Gắn sự kiện lắng nghe để kiểm tra dữ liệu và bật/tắt nút gửi real-time
+      const formMap = {
+        "form_db1": "db1",
+        "form_db2": "db2",
+        "form_db3": "db3",
+        "form_db4": "db4",
+        "form_db5": "db5",
+        "form_user_plan": "user_plan"
+      };
+
+      Object.entries(formMap).forEach(([formId, formType]) => {
+        const formEl = document.getElementById(formId);
+        if (formEl) {
+          formEl.addEventListener("input", () => updateFormValidation(formType));
+          formEl.addEventListener("change", () => updateFormValidation(formType));
+        }
+      });
+
+      updateAllButtons();
     });
 
     function renderProductChips(containerId, prefix) {
@@ -693,6 +717,10 @@
     }
 
     function toggleProduct(prefix, prodId, btnElement) {
+      if (prefix === "user" && !selectedProducts.user.has(prodId) && selectedProducts.user.size >= 3) {
+        showToast("Kế hoạch chỉ cho phép chọn tối đa 3 nhóm sản phẩm!", false);
+        return;
+      }
       if (selectedProducts[prefix].has(prodId)) {
         selectedProducts[prefix].delete(prodId);
         btnElement.classList.remove("active");
@@ -702,19 +730,141 @@
         btnElement.classList.add("active");
         btnElement.classList.remove("bg-white", "text-slate-600", "border-slate-300");
       }
+      const formKey = prefix === "user" ? "user_plan" : prefix;
+      updateFormValidation(formKey);
     }
 
-    // Điền tọa độ mẫu tiện ích
-    function fillSampleCoords(tab) {
-      if (tab === 'db1') {
-        document.getElementById('db1_lat').value = 10.7721;
-        document.getElementById('db1_lng').value = 106.6578;
-        showToast("Đã điền tọa độ tâm ĐH Bách Khoa TP.HCM (Lat: 10.7721, Lng: 106.6578)");
-      } else if (tab === 'db2') {
-        document.getElementById('db2_lat').value = 10.7730;
-        document.getElementById('db2_lng').value = 106.6582;
-        showToast("Đã điền tọa độ đối thủ cách 150m (Lat: 10.7730, Lng: 106.6582)");
+    // Kiểm tra tính hợp lệ của từng form (chỉ khi có đủ thông tin bắt buộc mới hợp lệ)
+    function isFormValid(formType) {
+      if (formType === "db1") {
+        const name = document.getElementById("db1_name")?.value?.trim() || "";
+        const lat = document.getElementById("db1_lat")?.value?.trim() || "";
+        const lng = document.getElementById("db1_lng")?.value?.trim() || "";
+        return name.length > 0 && lat !== "" && !isNaN(lat) && lng !== "" && !isNaN(lng);
       }
+      if (formType === "db2") {
+        const name = document.getElementById("db2_name")?.value?.trim() || "";
+        const lat = document.getElementById("db2_lat")?.value?.trim() || "";
+        const lng = document.getElementById("db2_lng")?.value?.trim() || "";
+        const model = document.getElementById("db2_model_id")?.value || "";
+        const weakness = document.getElementById("db2_weakness")?.value?.trim() || "";
+        return name.length > 0 && lat !== "" && !isNaN(lat) && lng !== "" && !isNaN(lng) && model !== "" && weakness.length > 0;
+      }
+      if (formType === "db3") {
+        const title = document.getElementById("prob_title")?.value?.trim() || "";
+        const severity = document.getElementById("prob_severity")?.value || "";
+        const summary = document.getElementById("prob_summary")?.value?.trim() || "";
+        return title.length > 0 && severity !== "" && summary.length > 0;
+      }
+      if (formType === "db4") {
+        const title = document.getElementById("exp_title")?.value?.trim() || "";
+        const takeaway = document.getElementById("exp_takeaway")?.value?.trim() || "";
+        return title.length > 0 && takeaway.length > 0;
+      }
+      if (formType === "db5") {
+        const segment = document.getElementById("mkt_segment")?.value?.trim() || "";
+        const budget = document.getElementById("mkt_budget")?.value?.trim() || "";
+        const peak = document.getElementById("mkt_peak")?.value?.trim() || "";
+        const behavior = document.getElementById("mkt_behavior")?.value?.trim() || "";
+        return segment.length > 0 && budget.length > 0 && peak.length > 0 && behavior.length > 0;
+      }
+      if (formType === "user_plan") {
+        const loc = document.getElementById("user_location")?.value?.trim() || "";
+        const model = document.getElementById("user_model_id")?.value || "";
+        const budgetRaw = document.getElementById("user_budget")?.value?.trim() || "";
+        const budget = parseFloat(budgetRaw);
+        const hasProducts = selectedProducts.user.size >= 1 && selectedProducts.user.size <= 3;
+        return loc.length > 0 && model !== "" && !isNaN(budget) && budget > 0 && hasProducts;
+      }
+      return false;
+    }
+
+    // Cập nhật trạng thái bật/tắt của nút gửi và hiển thị gợi ý
+    function updateFormValidation(formType) {
+      const btn = document.getElementById(`btn_submit_${formType}`);
+      const hint = document.getElementById(`hint_${formType}`);
+      if (!btn) return;
+      const valid = isFormValid(formType);
+      btn.disabled = !valid;
+      if (hint) {
+        if (valid) {
+          hint.innerHTML = '<span class="text-emerald-600 font-semibold flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> Đủ thông tin để gửi</span>';
+        } else {
+          let reqMsg = "Vui lòng điền đủ các trường bắt buộc (*)";
+          if (formType === "user_plan") {
+            reqMsg = "Vui lòng điền đủ (*), vốn > 0 và chọn 1-3 nhóm sản phẩm";
+          }
+          hint.innerHTML = `<span class="text-slate-400 italic">${reqMsg}</span>`;
+        }
+      }
+    }
+
+    function updateAllButtons() {
+      ["db1", "db2", "db3", "db4", "db5", "user_plan"].forEach(updateFormValidation);
+    }
+
+    // Reset các trường nhập liệu về giá trị mặc định (trống, số 0) sau khi gửi thành công
+    function resetFormValues(formType) {
+      if (formType === "db1") {
+        document.getElementById("db1_name").value = "";
+        document.getElementById("db1_radius").value = "0";
+        document.getElementById("db1_lat").value = "";
+        document.getElementById("db1_lng").value = "";
+        document.getElementById("db1_pop_density").value = "0";
+        document.getElementById("db1_income").value = "";
+        document.getElementById("db1_age_18_24").value = "0";
+        document.getElementById("db1_age_25_34").value = "0";
+        document.getElementById("db1_age_35_50").value = "0";
+        document.getElementById("db1_age_over_50").value = "0";
+        document.getElementById("db1_area_types").value = "";
+      } else if (formType === "db2") {
+        document.getElementById("db2_name").value = "";
+        document.getElementById("db2_lat").value = "";
+        document.getElementById("db2_lng").value = "";
+        document.getElementById("db2_model_id").value = "";
+        document.getElementById("db2_price_range").value = "";
+        document.getElementById("db2_rating").value = "0";
+        document.getElementById("db2_review_count").value = "0";
+        document.getElementById("db2_weakness").value = "";
+        selectedProducts.db2.clear();
+        renderProductChips("db2_products_container", "db2");
+      } else if (formType === "db3") {
+        document.getElementById("prob_title").value = "";
+        document.getElementById("prob_severity").value = "";
+        document.getElementById("prob_summary").value = "";
+        const chk = document.getElementById("prob_tag_0");
+        if (chk) chk.checked = false;
+        document.getElementById("prob_model").value = "";
+        selectedProducts.prob.clear();
+        renderProductChips("prob_products_container", "prob");
+      } else if (formType === "db4") {
+        document.getElementById("exp_title").value = "";
+        document.getElementById("exp_takeaway").value = "";
+        document.getElementById("exp_story").value = "";
+        document.getElementById("exp_dialogue_script").value = "";
+        const chk = document.getElementById("exp_tag_0");
+        if (chk) chk.checked = false;
+        document.getElementById("exp_model").value = "";
+        selectedProducts.exp.clear();
+        renderProductChips("exp_products_container", "exp");
+      } else if (formType === "db5") {
+        document.getElementById("mkt_segment").value = "";
+        document.getElementById("mkt_budget").value = "";
+        document.getElementById("mkt_peak").value = "";
+        document.getElementById("mkt_behavior").value = "";
+        selectedProducts.mkt.clear();
+        renderProductChips("mkt_products_container", "mkt");
+      } else if (formType === "user_plan") {
+        document.getElementById("user_location").value = "";
+        document.getElementById("user_model_id").value = "";
+        document.getElementById("user_budget").value = "0";
+        document.getElementById("user_rent").value = "";
+        document.getElementById("user_target_customer").value = "";
+        document.getElementById("user_notes").value = "";
+        selectedProducts.user.clear();
+        renderProductChips("user_products_container", "user");
+      }
+      updateFormValidation(formType);
     }
 
     // Chuyển đổi Tab
@@ -773,6 +923,12 @@
     // Nộp Form lên Backend API (Chuẩn hóa 100% theo thuộc tính đặc tả)
     async function submitForm(event, formType) {
       event.preventDefault();
+
+      if (!isFormValid(formType)) {
+        showToast("Vui lòng điền đầy đủ các thông tin bắt buộc trước khi gửi!", false);
+        return;
+      }
+
       let payload = {};
       let collectionName = "";
 
@@ -783,6 +939,8 @@
         const lat = parseFloat(document.getElementById("db1_lat").value);
         const lng = parseFloat(document.getElementById("db1_lng").value);
         const areaTypes = document.getElementById("db1_area_types").value.split(",").map(s => s.trim()).filter(Boolean);
+        const radVal = document.getElementById("db1_radius").value;
+        const popVal = document.getElementById("db1_pop_density").value;
 
         payload = {
           name: document.getElementById("db1_name").value.trim(),
@@ -790,15 +948,15 @@
             type: "Point",
             coordinates: [lng, lat]
           },
-          radius_m: parseInt(document.getElementById("db1_radius").value) || 3000,
-          population_density: parseInt(document.getElementById("db1_pop_density").value) || 0,
+          radius_m: radVal !== "" ? parseInt(radVal) : 0,
+          population_density: popVal !== "" ? parseInt(popVal) : 0,
           age_distribution: {
             "18_24": (parseFloat(document.getElementById("db1_age_18_24").value) || 0) / 100,
             "25_34": (parseFloat(document.getElementById("db1_age_25_34").value) || 0) / 100,
             "35_50": (parseFloat(document.getElementById("db1_age_35_50").value) || 0) / 100,
             "over_50": (parseFloat(document.getElementById("db1_age_over_50").value) || 0) / 100
           },
-          income_level: document.getElementById("db1_income").value,
+          income_level: document.getElementById("db1_income").value || null,
           area_type: areaTypes
         };
       }
@@ -808,6 +966,8 @@
         collectionName = "competitors";
         const lat = parseFloat(document.getElementById("db2_lat").value);
         const lng = parseFloat(document.getElementById("db2_lng").value);
+        const ratingVal = document.getElementById("db2_rating").value;
+        const revVal = document.getElementById("db2_review_count").value;
 
         payload = {
           name: document.getElementById("db2_name").value.trim(),
@@ -818,8 +978,8 @@
           business_model_id: parseInt(document.getElementById("db2_model_id").value),
           product_ids: Array.from(selectedProducts.db2),
           price_range: document.getElementById("db2_price_range").value.trim(),
-          rating: parseFloat(document.getElementById("db2_rating").value) || 0,
-          review_count: parseInt(document.getElementById("db2_review_count").value) || 0,
+          rating: ratingVal !== "" ? parseFloat(ratingVal) : 0,
+          review_count: revVal !== "" ? parseInt(revVal) : 0,
           weakness: document.getElementById("db2_weakness").value.trim()
         };
       }
@@ -828,7 +988,8 @@
       else if (formType === "db3") {
         collectionName = "problems";
         const tagIds = Array.from(selectedProducts.prob);
-        if (document.getElementById("prob_tag_0").checked) tagIds.unshift(0);
+        const chk = document.getElementById("prob_tag_0");
+        if (chk && chk.checked) tagIds.unshift(0);
         const modelVal = document.getElementById("prob_model").value;
         if (modelVal) tagIds.push(parseInt(modelVal));
 
@@ -844,7 +1005,8 @@
       else if (formType === "db4") {
         collectionName = "experiences";
         const tagIds = Array.from(selectedProducts.exp);
-        if (document.getElementById("exp_tag_0").checked) tagIds.unshift(0);
+        const chk = document.getElementById("exp_tag_0");
+        if (chk && chk.checked) tagIds.unshift(0);
         const modelVal = document.getElementById("exp_model").value;
         if (modelVal) tagIds.push(parseInt(modelVal));
 
@@ -875,13 +1037,14 @@
       else if (formType === "user_plan") {
         collectionName = "business_requests";
         const rentVal = document.getElementById("user_rent").value;
+        const budgetVal = document.getElementById("user_budget").value;
         payload = {
           location_text: document.getElementById("user_location").value.trim(),
           business_model_id: parseInt(document.getElementById("user_model_id").value),
           product_ids: Array.from(selectedProducts.user),
-          budget: parseFloat(document.getElementById("user_budget").value) || 0,
+          budget: budgetVal !== "" ? parseFloat(budgetVal) : 0,
           target_customer: document.getElementById("user_target_customer").value.trim() || null,
-          rent: rentVal ? parseFloat(rentVal) : null,
+          rent: rentVal !== "" ? parseFloat(rentVal) : null,
           notes: document.getElementById("user_notes").value.trim()
         };
       }
@@ -899,7 +1062,7 @@
         const result = await response.json();
         if (response.ok) {
           showToast(`Đã nộp thành công vào ${collectionName}! ID: ${result.inserted_id || 'OK'}`);
-          event.target.reset();
+          resetFormValues(formType);
         } else {
           showToast(`Lỗi: ${result.error || 'Không thể lưu'}`, false);
         }

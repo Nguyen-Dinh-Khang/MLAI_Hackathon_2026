@@ -5,10 +5,20 @@ Không cho phép lưu bất kỳ trường dư thừa nào ngoài đặc tả.
 """
 
 import os
+import sys
+import io
 import json
 import urllib.parse
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from datetime import datetime
+
+# Đảm bảo in tiếng Việt trên console Windows không bị UnicodeEncodeError
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+    except Exception:
+        pass
 
 # Cấu hình đường dẫn
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
