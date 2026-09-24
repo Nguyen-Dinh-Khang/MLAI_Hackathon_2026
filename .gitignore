@@ -10,6 +10,7 @@
 secrets.json
 
 # 2. Python Bytecode & Cache
+**/__pycache__/
 __pycache__/
 *.py[cod]
 .pyc
