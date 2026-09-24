@@ -638,20 +638,20 @@
     <!-- ================================================================= -->
     <section id="tab-explorer" class="tab-content hidden">
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
-        <div class="flex flex-wrap items-center justify-between border-b pb-4 mb-6 gap-3">
+        <div class="flex flex-wrap items-center justify-between border-b pb-4 mb-5 gap-3">
           <div>
             <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
-              <i class="fa-solid fa-table-list text-emerald-600"></i> Kho Dữ Liệu Đã Nộp Lên MongoDB
+              <i class="fa-solid fa-table-list text-emerald-600"></i> Quản Trị & Tìm Kiếm Dữ Liệu MongoDB
             </h2>
-            <p class="text-xs text-slate-500 mt-1">Xem trực tiếp các bản ghi đã lưu trong trọn bộ 5 CSDL</p>
+            <p class="text-xs text-slate-500 mt-1">Tìm kiếm, lọc thông minh theo Tag/Severity, sửa và xóa trực tiếp trên MongoDB Atlas</p>
           </div>
           <div class="flex items-center gap-2">
-            <select id="explorer_collection" onchange="loadSubmittedData()" class="px-3 py-2 border border-slate-300 rounded-lg text-xs font-bold bg-white text-slate-700">
-              <option value="areas">📍 DB1: Khu Vực (areas)</option>
-              <option value="competitors">🏪 DB2: Đối Thủ (competitors)</option>
-              <option value="problems">⚠️ DB3: Vấn Đề (problems)</option>
-              <option value="experiences" selected>🎓 DB4: Kinh Nghiệm (experiences)</option>
+            <select id="explorer_collection" onchange="onCollectionChange()" class="px-3 py-2 border border-slate-300 rounded-lg text-xs font-bold bg-white text-slate-700 shadow-sm focus:ring-2 focus:ring-emerald-500">
+              <option value="problems" selected>⚠️ DB3: Vấn Đề (problems)</option>
+              <option value="experiences">🎓 DB4: Kinh Nghiệm (experiences)</option>
               <option value="market_segments">📈 DB5: Thị Trường (market_segments)</option>
+              <option value="competitors">🏪 DB2: Đối Thủ (competitors)</option>
+              <option value="areas">📍 DB1: Khu Vực (areas)</option>
               <option value="business_requests">🚀 Kế Hoạch User (business_requests)</option>
             </select>
             <button onclick="loadSubmittedData()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition flex items-center gap-1">
@@ -660,9 +660,76 @@
           </div>
         </div>
 
+        <!-- SEARCH & FILTER TOOLBAR -->
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6 space-y-3">
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+            <!-- Keyword search -->
+            <div class="md:col-span-5">
+              <label class="block text-[11px] font-bold uppercase text-slate-600 mb-1">🔍 Tìm kiếm theo từ khóa</label>
+              <div class="relative">
+                <input type="text" id="explorer_search" onkeydown="if(event.key==='Enter') loadSubmittedData()" placeholder="Tìm theo tên, tiêu đề, tóm tắt, câu chuyện, hành vi..." class="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
+              </div>
+            </div>
+
+            <!-- Tag ID filter -->
+            <div class="md:col-span-3">
+              <label class="block text-[11px] font-bold uppercase text-slate-600 mb-1">🏷️ Lọc theo Mã Tag</label>
+              <input type="number" id="explorer_tag" onkeydown="if(event.key==='Enter') loadSubmittedData()" placeholder="Nhập mã số Tag (vd: 105, 401...)" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            </div>
+
+            <!-- Severity filter (active on problems) -->
+            <div class="md:col-span-2" id="filter_severity_wrapper">
+              <label class="block text-[11px] font-bold uppercase text-slate-600 mb-1">⚠️ Mức nghiêm trọng</label>
+              <select id="explorer_severity" onchange="loadSubmittedData()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-emerald-500">
+                <option value="">Tất cả mức</option>
+                <option value="3">🔴 Mức 3 (Tử huyệt)</option>
+                <option value="2">🟡 Mức 2 (Mất biên lãi)</option>
+                <option value="1">🟢 Mức 1 (Ma sát)</option>
+              </select>
+            </div>
+
+            <!-- Model filter (active on competitors) -->
+            <div class="md:col-span-2 hidden" id="filter_model_wrapper">
+              <label class="block text-[11px] font-bold uppercase text-slate-600 mb-1">🏪 Mô hình kinh doanh</label>
+              <select id="explorer_model" onchange="loadSubmittedData()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-emerald-500">
+                <option value="">Tất cả mô hình</option>
+                <option value="101">101: Quán ăn sáng</option>
+                <option value="102">102: Quán nước / Cà phê</option>
+                <option value="103">103: Quán cơm / Nhà hàng</option>
+                <option value="104">104: Quán nhậu / Ăn vặt</option>
+                <option value="105">105: Kiosk / Xe đẩy</option>
+                <option value="106">106: Tạp hóa / Đại lý</option>
+                <option value="107">107: Cửa hàng bán lẻ</option>
+                <option value="108">108: Tiệm làm đẹp / Spa</option>
+                <option value="109">109: Dịch vụ dân sinh</option>
+                <option value="110">110: Siêu thị mini / Tiện lợi</option>
+              </select>
+            </div>
+
+            <!-- Filter and Reset buttons -->
+            <div class="md:col-span-2 flex items-end gap-2">
+              <button onclick="loadSubmittedData()" class="flex-1 py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow transition flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-filter"></i> Lọc
+              </button>
+              <button onclick="resetFilters()" class="py-2 px-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-semibold transition" title="Xóa bộ lọc">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Stats / Status bar -->
+          <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-200">
+            <span id="explorer_stats" class="font-medium text-slate-700">Đang chuẩn bị truy vấn...</span>
+            <span class="text-[11px] text-slate-400 flex items-center gap-1">
+              <i class="fa-solid fa-bolt text-amber-500"></i> Index B-Tree & Compound Index trên MongoDB Atlas
+            </span>
+          </div>
+        </div>
+
         <div id="explorer_loading" class="hidden text-center py-8 text-slate-400">
-          <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i>
-          <p class="text-xs">Đang tải dữ liệu từ CSDL...</p>
+          <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-emerald-600"></i>
+          <p class="text-xs">Đang truy vấn dữ liệu từ MongoDB Atlas...</p>
         </div>
 
         <div id="explorer_container" class="space-y-3">
@@ -1209,42 +1276,100 @@
       }
     }
 
-    // Tải dữ liệu đã nộp
+    // =================================================================
+    // LOGIC QUẢN TRỊ, TÌM KIẾM, SỬA, XÓA DỮ LIỆU TRỰC TIẾP MONGODB
+    // =================================================================
+
+    let currentExplorerDocs = [];
+    let currentEditCol = "";
+    let currentEditId = "";
+
+    // Xử lý thay đổi collection
+    function onCollectionChange() {
+      const col = document.getElementById("explorer_collection").value;
+      const sevWrap = document.getElementById("filter_severity_wrapper");
+      const modelWrap = document.getElementById("filter_model_wrapper");
+
+      if (col === "problems") {
+        sevWrap.classList.remove("hidden");
+        modelWrap.classList.add("hidden");
+      } else if (col === "competitors") {
+        sevWrap.classList.add("hidden");
+        modelWrap.classList.remove("hidden");
+      } else {
+        sevWrap.classList.add("hidden");
+        modelWrap.classList.add("hidden");
+      }
+
+      loadSubmittedData();
+    }
+
+    // Xóa bộ lọc
+    function resetFilters() {
+      document.getElementById("explorer_search").value = "";
+      document.getElementById("explorer_tag").value = "";
+      document.getElementById("explorer_severity").value = "";
+      document.getElementById("explorer_model").value = "";
+      loadSubmittedData();
+    }
+
+    // Tải và Tìm kiếm dữ liệu từ MongoDB
     async function loadSubmittedData() {
       const col = document.getElementById("explorer_collection").value;
+      const q = document.getElementById("explorer_search").value.trim();
+      const tag = document.getElementById("explorer_tag").value.trim();
+      const sev = document.getElementById("explorer_severity").value;
+      const model = document.getElementById("explorer_model").value;
+
       const container = document.getElementById("explorer_container");
       const loading = document.getElementById("explorer_loading");
+      const stats = document.getElementById("explorer_stats");
 
       loading.classList.remove("hidden");
       container.innerHTML = "";
 
+      const params = new URLSearchParams({ collection: col, limit: "100" });
+      if (q) params.append("q", q);
+      if (tag) params.append("tag", tag);
+      if (sev && col === "problems") params.append("severity", sev);
+      if (model && col === "competitors") params.append("model_id", model);
+
       try {
-        const res = await fetch(`/api/documents?collection=${col}`);
+        const res = await fetch(`/api/documents?${params.toString()}`);
         const data = await res.json();
         loading.classList.add("hidden");
 
-        if (!data.documents || data.documents.length === 0) {
+        currentExplorerDocs = data.documents || [];
+        const total = data.total || currentExplorerDocs.length;
+        const count = currentExplorerDocs.length;
+
+        stats.innerHTML = `Hiển thị <strong>${count}</strong> / ${total} bản ghi trong collection <code class="text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">${col}</code>`;
+
+        if (currentExplorerDocs.length === 0) {
           container.innerHTML = `
-            <div class="text-center py-8 text-slate-400 border-2 border-dashed border-slate-200 rounded-xl">
-              <i class="fa-regular fa-folder-open text-3xl mb-2 text-slate-300"></i>
-              <p class="text-xs">Chưa có bản ghi nào trong collection <strong>${col}</strong>.</p>
-              <p class="text-xs text-slate-400 mt-1">Hãy nhập dữ liệu ở các tab bên trên để lưu trữ.</p>
+            <div class="text-center py-10 text-slate-400 border-2 border-dashed border-slate-200 rounded-xl">
+              <i class="fa-regular fa-folder-open text-4xl mb-2 text-slate-300"></i>
+              <p class="text-sm font-medium">Không tìm thấy bản ghi nào phù hợp.</p>
+              <p class="text-xs text-slate-400 mt-1">Hãy thử đổi từ khóa tìm kiếm hoặc bấm nút "Xóa bộ lọc" bên trên.</p>
             </div>
           `;
           return;
         }
 
-        container.innerHTML = data.documents.map((doc, idx) => {
+        container.innerHTML = currentExplorerDocs.map((doc, idx) => {
           let detailInfo = "";
+          const docId = doc._id || "";
+          const docTitle = doc.name || doc.title || doc.segment || doc.location_text || `Bản ghi #${idx + 1}`;
+
           if (col === "areas") {
             const coords = doc.center?.coordinates || [];
             const ageDist = doc.age_distribution ? Object.entries(doc.age_distribution).map(([k, v]) => `${k}: ${(v*100).toFixed(0)}%`).join(", ") : "";
             detailInfo = `
-              <div class="text-xs text-cyan-800 bg-cyan-50 p-2.5 rounded-lg mt-2 space-y-1">
+              <div class="text-xs text-cyan-900 bg-cyan-50/80 p-3 rounded-lg mt-2 space-y-1 border border-cyan-100">
                 <div class="flex flex-wrap gap-3">
-                  <span><i class="fa-solid fa-location-crosshairs text-cyan-600"></i> Tọa độ: [${coords[0]}, ${coords[1]}]</span>
+                  <span><i class="fa-solid fa-location-crosshairs text-cyan-600"></i> Tọa độ tâm: [${coords[0]}, ${coords[1]}]</span>
                   <span><i class="fa-solid fa-users text-cyan-600"></i> Mật độ: ${doc.population_density?.toLocaleString() || 'N/A'} người/km²</span>
-                  <span><i class="fa-solid fa-wallet text-cyan-600"></i> Thu nhập: ${doc.income_level}</span>
+                  <span><i class="fa-solid fa-wallet text-cyan-600"></i> Mức thu nhập: ${doc.income_level}</span>
                   <span><i class="fa-solid fa-circle-notch text-cyan-600"></i> Bán kính: ${doc.radius_m}m</span>
                 </div>
                 ${ageDist ? `<div class="text-[11px] text-cyan-700">Độ tuổi: ${ageDist}</div>` : ''}
@@ -1254,43 +1379,43 @@
           } else if (col === "competitors") {
             const coords = doc.location?.coordinates || [];
             detailInfo = `
-              <div class="text-xs text-rose-800 bg-rose-50 p-2.5 rounded-lg mt-2 space-y-1">
+              <div class="text-xs text-rose-900 bg-rose-50/80 p-3 rounded-lg mt-2 space-y-1.5 border border-rose-100">
                 <div class="flex flex-wrap gap-3 items-center">
-                  <span><i class="fa-solid fa-map-pin text-rose-600"></i> [${coords[0]}, ${coords[1]}]</span>
-                  <span><i class="fa-solid fa-tag text-rose-600"></i> Giá: ${doc.price_range}</span>
-                  <span><i class="fa-solid fa-star text-amber-500"></i> ${doc.rating}★ (${doc.review_count} reviews)</span>
-                  <span>Mô hình: #${doc.business_model_id}</span>
+                  <span><i class="fa-solid fa-map-pin text-rose-600"></i> Tọa độ: [${coords[0]}, ${coords[1]}]</span>
+                  <span><i class="fa-solid fa-tag text-rose-600"></i> Khung giá: <strong>${doc.price_range}</strong></span>
+                  <span><i class="fa-solid fa-star text-amber-500"></i> ${doc.rating}★ (${doc.review_count} đánh giá)</span>
+                  <span class="bg-rose-100 text-rose-800 px-1.5 py-0.5 rounded font-mono">Mô hình: #${doc.business_model_id}</span>
                 </div>
-                <div class="text-[11px] text-rose-700 font-medium">⚠️ Điểm yếu: ${doc.weakness || 'Chưa ghi nhận'}</div>
+                <div class="text-[11px] text-rose-700"><span class="font-bold">⚠️ Điểm yếu:</span> ${doc.weakness || 'Chưa ghi nhận'}</div>
               </div>
             `;
           } else if (col === "problems") {
             detailInfo = `
-              <div class="text-xs text-amber-900 bg-amber-50 p-2.5 rounded-lg mt-2">
-                <p>${doc.summary}</p>
+              <div class="text-xs text-amber-950 bg-amber-50/80 p-3 rounded-lg mt-2 border border-amber-100">
+                <p class="leading-relaxed">${doc.summary}</p>
               </div>
             `;
           } else if (col === "experiences") {
             detailInfo = `
-              <div class="text-xs text-indigo-900 bg-indigo-50 p-2.5 rounded-lg mt-2 space-y-1">
-                <p class="font-semibold text-indigo-950">💡 Đúc kết: ${doc.key_takeaway}</p>
-                ${doc.story ? `<p class="text-slate-600 italic">Câu chuyện: ${doc.story}</p>` : ''}
-                ${doc.dialogue_script ? `<p class="text-indigo-700 bg-white p-1.5 rounded border border-indigo-200">🗣 Lời thoại: "${doc.dialogue_script}"</p>` : ''}
+              <div class="text-xs text-indigo-950 bg-indigo-50/80 p-3 rounded-lg mt-2 space-y-1.5 border border-indigo-100">
+                <p class="font-semibold text-indigo-950">💡 Đúc kết cốt lõi: ${doc.key_takeaway}</p>
+                ${doc.story ? `<p class="text-slate-600 italic">Câu chuyện thực tế: ${doc.story}</p>` : ''}
+                ${doc.dialogue_script ? `<p class="text-indigo-800 bg-white p-2 rounded border border-indigo-200">🗣 Lời thoại xử lý: "${doc.dialogue_script}"</p>` : ''}
               </div>
             `;
           } else if (col === "market_segments") {
             detailInfo = `
-              <div class="text-xs text-blue-900 bg-blue-50 p-2.5 rounded-lg mt-2 space-y-1">
-                <div class="flex flex-wrap gap-3">
-                  <span><i class="fa-solid fa-money-bill-wave text-blue-600"></i> Chi trả: ${doc.price_tolerance}</span>
-                  <span><i class="fa-solid fa-clock text-blue-600"></i> Giờ cao điểm: ${doc.peak_traffic}</span>
+              <div class="text-xs text-blue-950 bg-blue-50/80 p-3 rounded-lg mt-2 space-y-1.5 border border-blue-100">
+                <div class="flex flex-wrap gap-4">
+                  <span><i class="fa-solid fa-money-bill-wave text-blue-600"></i> Mức chi trả: <strong>${doc.price_tolerance}</strong></span>
+                  <span><i class="fa-solid fa-clock text-blue-600"></i> Giờ cao điểm: <strong>${doc.peak_traffic}</strong></span>
                 </div>
-                <p class="text-slate-700">Hành vi: ${doc.behavior_notes}</p>
+                <p class="text-slate-700 leading-relaxed"><span class="font-bold">Hành vi & Đặc điểm:</span> ${doc.behavior_notes}</p>
               </div>
             `;
           } else if (col === "business_requests") {
             detailInfo = `
-              <div class="text-xs text-purple-900 bg-purple-50 p-2.5 rounded-lg mt-2 space-y-1">
+              <div class="text-xs text-purple-950 bg-purple-50/80 p-3 rounded-lg mt-2 space-y-1 border border-purple-100">
                 <div class="flex flex-wrap gap-3">
                   <span>Mô hình: #${doc.business_model_id}</span>
                   <span>Vốn: ${doc.budget ? doc.budget.toLocaleString() : 'N/A'} VND</span>
@@ -1301,27 +1426,65 @@
             `;
           }
 
+          // Hiển thị Severity badge
+          let severityBadge = "";
+          if (doc.severity !== undefined) {
+            const sevNum = parseInt(doc.severity);
+            if (sevNum === 3 || doc.severity === "HIGH") {
+              severityBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 border border-red-200">🔴 Mức 3 (Tử huyệt)</span>`;
+            } else if (sevNum === 2 || doc.severity === "MEDIUM") {
+              severityBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200">🟡 Mức 2 (Mất lãi)</span>`;
+            } else {
+              severityBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700 border border-blue-200">🟢 Mức 1 (Ma sát)</span>`;
+            }
+          }
+
+          // Hiển thị Vector badge
+          let vectorBadge = "";
+          if (doc.has_vector || (Array.isArray(doc.embedding) && doc.embedding.length > 0)) {
+            const dim = doc.vector_dim || doc.embedding?.length || 1024;
+            vectorBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1"><i class="fa-solid fa-circle-check text-emerald-500"></i> Vector ${dim}-dim</span>`;
+          }
+
           const tagsHtml = (doc.tag_ids || doc.product_ids || []).map(tid => `
-            <span class="px-2 py-0.5 rounded text-[11px] font-mono ${tid === 0 ? 'bg-amber-100 text-amber-800 font-bold' : 'bg-indigo-50 text-indigo-700'}">
+            <span class="px-2 py-0.5 rounded text-[11px] font-mono ${tid === 0 ? 'bg-amber-100 text-amber-800 font-bold' : 'bg-indigo-50 text-indigo-700 border border-indigo-100'}">
               #${tid}
             </span>
           `).join(" ");
 
+          const escapedTitle = encodeURIComponent(docTitle);
+
           return `
-            <div class="p-4 border border-slate-200 rounded-xl bg-slate-50/50 hover:bg-white hover:shadow-sm transition">
+            <div class="p-4 border border-slate-200 rounded-xl bg-slate-50/40 hover:bg-white hover:shadow-md transition duration-150">
               <div class="flex items-start justify-between gap-3 mb-1">
-                <h4 class="text-sm font-bold text-slate-800">
-                  ${idx + 1}. ${doc.name || doc.title || doc.segment || doc.location_text || 'Bản ghi ' + (doc._id || idx)}
-                </h4>
-                ${doc.severity ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold ${doc.severity === 'HIGH' ? 'bg-red-100 text-red-700' : (doc.severity === 'MEDIUM' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700')}">${doc.severity}</span>` : ''}
+                <div class="flex-1">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-bold text-slate-400">#${idx + 1}</span>
+                    <h4 class="text-sm font-bold text-slate-800">${docTitle}</h4>
+                    ${severityBadge}
+                    ${vectorBadge}
+                  </div>
+                </div>
+
+                <!-- Action Buttons: SỬA & XÓA -->
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button onclick="openEditModal('${col}', '${docId}')" class="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded text-xs font-semibold transition flex items-center gap-1" title="Chỉnh sửa bản ghi này">
+                    <i class="fa-regular fa-pen-to-square"></i> Sửa
+                  </button>
+                  <button onclick="deleteDocument('${col}', '${docId}', decodeURIComponent('${escapedTitle}'))" class="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded text-xs font-semibold transition flex items-center gap-1" title="Xóa bản ghi này khỏi MongoDB">
+                    <i class="fa-regular fa-trash-can"></i> Xóa
+                  </button>
+                </div>
               </div>
+
               ${detailInfo}
-              <div class="flex items-center justify-between text-[11px] text-slate-400 border-t pt-2 mt-2">
-                <div class="flex items-center gap-1">
-                  <span>Tags:</span>
+
+              <div class="flex flex-wrap items-center justify-between text-[11px] text-slate-400 border-t border-slate-100 pt-2.5 mt-2.5 gap-2">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="font-medium text-slate-500">Mã Tags:</span>
                   ${tagsHtml || '<span class="text-slate-300">Không có</span>'}
                 </div>
-                <span class="font-mono text-[10px] text-slate-400">ID: ${doc._id || ''}</span>
+                <span class="font-mono text-[10px] text-slate-400 bg-slate-100 px-2 py-0.5 rounded">ID: ${docId}</span>
               </div>
             </div>
           `;
@@ -1329,9 +1492,359 @@
 
       } catch (err) {
         loading.classList.add("hidden");
-        container.innerHTML = `<div class="text-xs text-red-500 text-center py-4">Không thể kết nối đến backend API.</div>`;
+        container.innerHTML = `<div class="text-xs text-red-500 text-center py-4">Không thể kết nối đến backend API (${err}). Hãy kiểm tra xem server.py có đang chạy không.</div>`;
+      }
+    }
+
+    // =================================================================
+    // MODAL CHỈNH SỬA (EDIT MODAL)
+    // =================================================================
+
+    function openEditModal(col, docId) {
+      currentEditCol = col;
+      currentEditId = docId;
+
+      const doc = currentExplorerDocs.find(d => String(d._id) === String(docId));
+      if (!doc) {
+        showToast("Không tìm thấy dữ liệu bản ghi!", false);
+        return;
+      }
+
+      document.getElementById("editModalSubtitle").innerText = `Collection: ${col} • ID: ${docId}`;
+      const fieldsContainer = document.getElementById("editFormFields");
+      fieldsContainer.innerHTML = "";
+
+      if (col === "problems") {
+        fieldsContainer.innerHTML = `
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Tiêu Đề Vấn Đề (title) *</label>
+            <input type="text" id="edit_prob_title" value="${doc.title || ''}" required class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-amber-500">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Tóm Tắt Sự Cố & Giải Pháp (summary) *</label>
+            <textarea id="edit_prob_summary" rows="3" required class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-amber-500">${doc.summary || ''}</textarea>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Mức Độ Nghiêm Trọng (severity) *</label>
+              <select id="edit_prob_severity" class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-amber-500">
+                <option value="3" ${parseInt(doc.severity) === 3 ? 'selected' : ''}>🔴 Mức 3 (Tử huyệt sinh tồn)</option>
+                <option value="2" ${parseInt(doc.severity) === 2 ? 'selected' : ''}>🟡 Mức 2 (Bào mòn biên lãi)</option>
+                <option value="1" ${parseInt(doc.severity) === 1 ? 'selected' : ''}>🟢 Mức 1 (Ma sát vận hành)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Danh Sách Tag IDs (cách nhau dấu phẩy)</label>
+              <input type="text" id="edit_prob_tags" value="${(doc.tag_ids || []).join(', ')}" class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-amber-500" placeholder="0, 401, 105...">
+            </div>
+          </div>
+        `;
+      } else if (col === "experiences") {
+        fieldsContainer.innerHTML = `
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Tiêu Đề Bài Học (title) *</label>
+            <input type="text" id="edit_exp_title" value="${doc.title || ''}" required class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-indigo-500">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Đúc Kết Cốt Lõi (key_takeaway) *</label>
+            <textarea id="edit_exp_takeaway" rows="2" required class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-indigo-500">${doc.key_takeaway || ''}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Câu Chuyện Thực Tế (story)</label>
+            <textarea id="edit_exp_story" rows="3" class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-indigo-500">${doc.story || ''}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Lời Thoại Xử Lý Thực Chiến (dialogue_script)</label>
+            <input type="text" id="edit_exp_script" value="${doc.dialogue_script || ''}" class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-indigo-500">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Danh Sách Tag IDs (cách nhau dấu phẩy)</label>
+            <input type="text" id="edit_exp_tags" value="${(doc.tag_ids || []).join(', ')}" class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-indigo-500">
+          </div>
+        `;
+      } else if (col === "market_segments") {
+        fieldsContainer.innerHTML = `
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Phân Khúc Khách Hàng (segment) *</label>
+            <input type="text" id="edit_mkt_segment" value="${doc.segment || ''}" required class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Mức Chi Trả (price_tolerance) *</label>
+              <input type="text" id="edit_mkt_price" value="${doc.price_tolerance || ''}" required class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Khung Giờ Cao Điểm (peak_traffic) *</label>
+              <input type="text" id="edit_mkt_peak" value="${doc.peak_traffic || ''}" required class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-blue-500">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Hành Vi & Đặc Điểm (behavior_notes) *</label>
+            <textarea id="edit_mkt_notes" rows="3" required class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-blue-500">${doc.behavior_notes || ''}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Danh Sách Tag IDs (cách nhau dấu phẩy)</label>
+            <input type="text" id="edit_mkt_tags" value="${(doc.tag_ids || []).join(', ')}" class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-blue-500">
+          </div>
+        `;
+      } else if (col === "competitors") {
+        const coords = doc.location?.coordinates || [106.7, 10.7];
+        fieldsContainer.innerHTML = `
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Tên Đối Thủ (name) *</label>
+            <input type="text" id="edit_comp_name" value="${doc.name || ''}" required class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-rose-500">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Kinh Độ Longitude *</label>
+              <input type="number" step="any" id="edit_comp_lng" value="${coords[0]}" required class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-rose-500">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Vĩ Độ Latitude *</label>
+              <input type="number" step="any" id="edit_comp_lat" value="${coords[1]}" required class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-rose-500">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Mã Mô Hình (business_model_id) *</label>
+              <input type="number" id="edit_comp_model" value="${doc.business_model_id || 101}" required class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-rose-500">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Sản Phẩm (product_ids, phẩy)</label>
+              <input type="text" id="edit_comp_products" value="${(doc.product_ids || []).join(', ')}" class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-rose-500">
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Khung Giá</label>
+              <input type="text" id="edit_comp_price" value="${doc.price_range || ''}" class="w-full px-3 py-2 border rounded-lg text-xs">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Điểm Đánh Giá ★</label>
+              <input type="number" step="0.1" id="edit_comp_rating" value="${doc.rating || 4.0}" class="w-full px-3 py-2 border rounded-lg text-xs">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Lượng Review</label>
+              <input type="number" id="edit_comp_reviews" value="${doc.review_count || 100}" class="w-full px-3 py-2 border rounded-lg text-xs">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Điểm Yếu (weakness)</label>
+            <textarea id="edit_comp_weakness" rows="2" class="w-full px-3 py-2 border rounded-lg text-xs">${doc.weakness || ''}</textarea>
+          </div>
+        `;
+      } else if (col === "areas") {
+        const coords = doc.center?.coordinates || [106.7, 10.7];
+        fieldsContainer.innerHTML = `
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Tên Khu Vực (name) *</label>
+            <input type="text" id="edit_area_name" value="${doc.name || ''}" required class="w-full px-3 py-2 border rounded-lg text-xs">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Kinh Độ Longitude *</label>
+              <input type="number" step="any" id="edit_area_lng" value="${coords[0]}" required class="w-full px-3 py-2 border rounded-lg text-xs">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Vĩ Độ Latitude *</label>
+              <input type="number" step="any" id="edit_area_lat" value="${coords[1]}" required class="w-full px-3 py-2 border rounded-lg text-xs">
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Bán Kính (m)</label>
+              <input type="number" id="edit_area_radius" value="${doc.radius_m || 3000}" class="w-full px-3 py-2 border rounded-lg text-xs">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Mật Độ Dân Số</label>
+              <input type="number" id="edit_area_density" value="${doc.population_density || 0}" class="w-full px-3 py-2 border rounded-lg text-xs">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Mức Thu Nhập</label>
+              <input type="text" id="edit_area_income" value="${doc.income_level || 'medium'}" class="w-full px-3 py-2 border rounded-lg text-xs">
+            </div>
+          </div>
+        `;
+      } else {
+        fieldsContainer.innerHTML = `
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Dữ Liệu JSON (Gốc)</label>
+            <textarea id="edit_generic_json" rows="8" class="w-full px-3 py-2 border rounded-lg text-xs font-mono">${JSON.stringify(doc, null, 2)}</textarea>
+          </div>
+        `;
+      }
+
+      document.getElementById("editModal").classList.remove("hidden");
+    }
+
+    function closeEditModal() {
+      document.getElementById("editModal").classList.add("hidden");
+    }
+
+    async function submitEdit(event) {
+      event.preventDefault();
+      const col = currentEditCol;
+      const docId = currentEditId;
+      let updatedDocument = {};
+
+      const parseNumList = (str) => {
+        return (str || "").split(",")
+          .map(s => parseInt(s.trim()))
+          .filter(n => !isNaN(n));
+      };
+
+      if (col === "problems") {
+        updatedDocument = {
+          title: document.getElementById("edit_prob_title").value.trim(),
+          summary: document.getElementById("edit_prob_summary").value.trim(),
+          severity: parseInt(document.getElementById("edit_prob_severity").value),
+          tag_ids: parseNumList(document.getElementById("edit_prob_tags").value)
+        };
+      } else if (col === "experiences") {
+        updatedDocument = {
+          title: document.getElementById("edit_exp_title").value.trim(),
+          key_takeaway: document.getElementById("edit_exp_takeaway").value.trim(),
+          story: document.getElementById("edit_exp_story").value.trim(),
+          dialogue_script: document.getElementById("edit_exp_script").value.trim(),
+          tag_ids: parseNumList(document.getElementById("edit_exp_tags").value)
+        };
+      } else if (col === "market_segments") {
+        updatedDocument = {
+          segment: document.getElementById("edit_mkt_segment").value.trim(),
+          price_tolerance: document.getElementById("edit_mkt_price").value.trim(),
+          peak_traffic: document.getElementById("edit_mkt_peak").value.trim(),
+          behavior_notes: document.getElementById("edit_mkt_notes").value.trim(),
+          tag_ids: parseNumList(document.getElementById("edit_mkt_tags").value)
+        };
+      } else if (col === "competitors") {
+        updatedDocument = {
+          name: document.getElementById("edit_comp_name").value.trim(),
+          location: {
+            type: "Point",
+            coordinates: [
+              parseFloat(document.getElementById("edit_comp_lng").value),
+              parseFloat(document.getElementById("edit_comp_lat").value)
+            ]
+          },
+          business_model_id: parseInt(document.getElementById("edit_comp_model").value),
+          product_ids: parseNumList(document.getElementById("edit_comp_products").value),
+          price_range: document.getElementById("edit_comp_price").value.trim(),
+          rating: parseFloat(document.getElementById("edit_comp_rating").value) || 0,
+          review_count: parseInt(document.getElementById("edit_comp_reviews").value) || 0,
+          weakness: document.getElementById("edit_comp_weakness").value.trim()
+        };
+      } else if (col === "areas") {
+        updatedDocument = {
+          name: document.getElementById("edit_area_name").value.trim(),
+          center: {
+            type: "Point",
+            coordinates: [
+              parseFloat(document.getElementById("edit_area_lng").value),
+              parseFloat(document.getElementById("edit_area_lat").value)
+            ]
+          },
+          radius_m: parseInt(document.getElementById("edit_area_radius").value) || 3000,
+          population_density: parseInt(document.getElementById("edit_area_density").value) || 0,
+          income_level: document.getElementById("edit_area_income").value.trim()
+        };
+      } else {
+        try {
+          updatedDocument = JSON.parse(document.getElementById("edit_generic_json").value);
+        } catch (e) {
+          showToast("JSON không hợp lệ!", false);
+          return;
+        }
+      }
+
+      try {
+        const res = await fetch("/api/update", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            collection: col,
+            id: docId,
+            document: updatedDocument
+          })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast("Đã cập nhật bản ghi thành công trên MongoDB Atlas!");
+          closeEditModal();
+          loadSubmittedData();
+        } else {
+          showToast(`Lỗi cập nhật: ${data.error || data.message || 'Không thể lưu'}`, false);
+        }
+      } catch (err) {
+        showToast(`Lỗi kết nối máy chủ: ${err}`, false);
+      }
+    }
+
+    // =================================================================
+    // XÓA BẢN GHI (DELETE)
+    // =================================================================
+
+    async function deleteDocument(col, docId, docName) {
+      const confirmDelete = confirm(`⚠️ CẢNH BÁO XÓA:\n\nBạn có chắc chắn muốn XÓA vĩnh viễn bản ghi sau khỏi MongoDB Atlas?\n\n• Tên: "${docName}"\n• Collection: ${col}\n• ID: ${docId}\n\nHành động này không thể hoàn tác.`);
+      if (!confirmDelete) return;
+
+      try {
+        const res = await fetch("/api/delete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            collection: col,
+            id: docId
+          })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast(`Đã xóa vĩnh viễn bản ghi "${docName}" khỏi MongoDB!`);
+          loadSubmittedData();
+        } else {
+          showToast(`Không thể xóa: ${data.error || data.message || 'Lỗi server'}`, false);
+        }
+      } catch (err) {
+        showToast(`Lỗi kết nối khi xóa: ${err}`, false);
       }
     }
   </script>
+
+  <!-- MODAL CHỈNH SỬA BẢN GHI MONGODB -->
+  <div id="editModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <div>
+          <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-pen-to-square text-amber-500"></i> Chỉnh Sửa Bản Ghi MongoDB Atlas
+          </h3>
+          <p class="text-xs text-slate-500" id="editModalSubtitle">Collection: problems • ID: ...</p>
+        </div>
+        <button onclick="closeEditModal()" class="w-8 h-8 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-600 flex items-center justify-center">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="editForm" onsubmit="submitEdit(event)" class="p-6 overflow-y-auto space-y-4 flex-1">
+        <div id="editFormFields" class="space-y-4">
+          <!-- Form fields sinh động theo collection -->
+        </div>
+
+        <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-xs text-emerald-800 flex items-start gap-2">
+          <i class="fa-solid fa-shield-halved text-emerald-600 mt-0.5"></i>
+          <span><strong>Bảo lưu an toàn:</strong> Toàn bộ Vector Embedding (1024-dim BGE-M3) của bản ghi sẽ được tự động bảo tồn vẹn nguyên trong MongoDB Atlas khi bạn lưu thay đổi các thuộc tính.</span>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-3 border-t">
+          <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold">Hủy Bỏ</button>
+          <button type="submit" id="btnSaveEdit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow flex items-center gap-1.5">
+            <i class="fa-solid fa-floppy-disk"></i> Lưu Thay Đổi Vào MongoDB
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 </body>
 </html>

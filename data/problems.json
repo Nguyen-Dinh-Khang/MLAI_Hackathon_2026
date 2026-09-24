@@ -4,7 +4,7 @@
     "tag_ids": [105, 204, 402],
     "title": "Biến động giá nguyên liệu thịt nguội và pate sau 3 tháng",
     "summary": "Giá thịt tăng 15-20% làm đứt dòng tiền của xe bánh mì nếu không ký giá sỉ cố định.",
-    "severity": "HIGH",
+    "severity": "3",
     "embedding": []
   },
   {
@@ -12,7 +12,7 @@
     "tag_ids": [0, 401],
     "title": "Chủ nhà tăng giá thuê mặt bằng hoặc đòi lại sớm",
     "summary": "Mặt bằng vỉa hè hoặc mặt tiền bị chủ đòi lại sau khi quán bắt đầu đông khách nếu hợp đồng thiếu điều khoản bồi thường.",
-    "severity": "HIGH",
+    "severity": "3",
     "embedding": []
   },
   {
@@ -20,7 +20,7 @@
     "tag_ids": [105, 204, 404],
     "title": "Tắc nghẽn giờ cao điểm 07:00 - 07:25",
     "summary": "Sinh viên vội đi học không chờ được quá 90 giây dẫn đến bỏ đi sang quán bên cạnh.",
-    "severity": "MEDIUM",
+    "severity": "2",
     "embedding": []
   }
 ]

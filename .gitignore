@@ -1,1 +1,53 @@
+# =====================================================================
+# GITIGNORE - MINI APP (MLAI DECISION INTELLIGENCE PLATFORM)
+# =====================================================================
+
+# 1. Bảo mật & Biến môi trường (TUYỆT ĐỐI KHÔNG COMMIT LÊN GIT)
 .env
+.env.*
+*.env
+!.env.example
+secrets.json
+
+# 2. Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+.pyc
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 3. Virtual Environment (Môi trường ảo)
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# 4. Logs & File tạm thời
+*.log
+logs/
+*.tmp
+*.temp
+*.bak
+~$*
+
+# 5. Hệ điều hành (OS junk files)
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# 6. IDEs & Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
