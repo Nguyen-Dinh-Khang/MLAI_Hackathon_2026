@@ -53,7 +53,8 @@ STRICT_COLLECTION_SCHEMAS = {
         "_id", "tag_ids", "title", "story", "key_takeaway", "dialogue_script", "embedding"
     },
     "market_segments": {
-        "_id", "tag_ids", "segment", "price_tolerance", "peak_traffic", "behavior_notes", "embedding"
+        "_id", "tag_ids", "price_range", "peak_hours", "interest", "demand",
+        "segment", "price_tolerance", "peak_traffic", "behavior_notes", "embedding"
     },
     "business_requests": {
         "_id", "location_text", "business_model_id", "product_ids", 
@@ -135,9 +136,10 @@ def setup_database_indexes(db):
         db.problems.create_index([("severity", 1)])
         db.problems.create_index([("severity", 1), ("tag_ids", 1)])
         
-        # DB4, DB5: Index cho mảng số tag_ids
+        # DB4, DB5: Index cho mảng số tag_ids và interest
         db.experiences.create_index([("tag_ids", 1)])
         db.market_segments.create_index([("tag_ids", 1)])
+        db.market_segments.create_index([("interest", -1)])
         
         print("[*] Đã cấu hình xong toàn bộ Indexes: 2dsphere, tag_ids, severity & compound!")
     except Exception as idx_err:
@@ -366,7 +368,7 @@ class MLAIHttpHandler(BaseHTTPRequestHandler):
                         elif col_name == "experiences":
                             or_fields = [{"title": reg}, {"story": reg}, {"key_takeaway": reg}, {"dialogue_script": reg}]
                         elif col_name == "market_segments":
-                            or_fields = [{"segment": reg}, {"behavior_notes": reg}]
+                            or_fields = [{"demand": reg}, {"segment": reg}, {"behavior_notes": reg}]
                         elif col_name == "competitors":
                             or_fields = [{"name": reg}, {"weakness": reg}, {"price_range": reg}]
                         elif col_name == "areas":

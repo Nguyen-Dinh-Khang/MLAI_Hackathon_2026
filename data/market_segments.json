@@ -1,20 +1,770 @@
 [
   {
-    "_id": "mkt_01",
-    "tag_ids": [301, 204, 201],
-    "segment": "Sinh viên Đại học",
-    "price_tolerance": "18.000 - 30.000 VND",
-    "peak_traffic": "06:45 - 07:30",
-    "behavior_notes": "Mua mang đi vội trước giờ điểm danh ca 1, rất chuộng combo có nước uống kèm để tiết kiệm thời gian ghé 2 quán.",
-    "embedding": []
+    "tag_ids": [301, 201],
+    "price_range": { "min": 25000, "max": 60000 },
+    "peak_hours": [
+      { "start": "09:00", "end": "11:30" },
+      { "start": "14:00", "end": "22:30" }
+    ],
+    "interest": 0.95,
+    "demand": "Học tập, tụ tập bạn bè, check-in không gian đẹp"
   },
   {
-    "_id": "mkt_02",
-    "tag_ids": [302, 201, 202],
-    "segment": "Dân văn phòng trẻ",
-    "price_tolerance": "30.000 - 50.000 VND",
-    "peak_traffic": "07:30 - 08:30",
-    "behavior_notes": "Yêu cầu cao hơn về vệ sinh an toàn thực phẩm, bao bì giấy lịch sự, chuộng thanh toán chuyển khoản QR nhanh.",
-    "embedding": []
+    "tag_ids": [301, 202],
+    "price_range": { "min": 25000, "max": 45000 },
+    "peak_hours": [
+      { "start": "11:00", "end": "13:30" },
+      { "start": "17:30", "end": "20:30" }
+    ],
+    "interest": 0.85,
+    "demand": "No lâu, giá rẻ, phục vụ nhanh giữa ca học"
+  },
+  {
+    "tag_ids": [301, 203],
+    "price_range": { "min": 30000, "max": 50000 },
+    "peak_hours": [
+      { "start": "06:30", "end": "09:00" },
+      { "start": "18:00", "end": "22:00" }
+    ],
+    "interest": 0.8,
+    "demand": "Dễ ăn, đổi vị khi ngán cơm, ăn khuya"
+  },
+  {
+    "tag_ids": [301, 204],
+    "price_range": { "min": 15000, "max": 30000 },
+    "peak_hours": [
+      { "start": "06:30", "end": "08:30" },
+      { "start": "16:30", "end": "18:30" }
+    ],
+    "interest": 0.9,
+    "demand": "Tiện lợi mang đi, cứu đói nhanh trước giờ học"
+  },
+  {
+    "tag_ids": [301, 205],
+    "price_range": { "min": 20000, "max": 60000 },
+    "peak_hours": [
+      { "start": "15:30", "end": "22:30" }
+    ],
+    "interest": 0.95,
+    "demand": "Ăn vui miệng, giải trí cùng bạn bè sau giờ tan học"
+  },
+  {
+    "tag_ids": [301, 206],
+    "price_range": { "min": 120000, "max": 250000 },
+    "peak_hours": [
+      { "start": "18:00", "end": "23:00" }
+    ],
+    "interest": 0.75,
+    "demand": "Liên hoan nhóm, sinh nhật, ưu đãi buffet giá sinh viên"
+  },
+  {
+    "tag_ids": [301, 207],
+    "price_range": { "min": 30000, "max": 100000 },
+    "peak_hours": [
+      { "start": "16:30", "end": "19:00" }
+    ],
+    "interest": 0.35,
+    "demand": "Mua lượng nhỏ, nấu ăn đơn giản tại phòng trọ"
+  },
+  {
+    "tag_ids": [301, 208],
+    "price_range": { "min": 20000, "max": 150000 },
+    "peak_hours": [
+      { "start": "11:30", "end": "13:00" },
+      { "start": "18:00", "end": "22:00" }
+    ],
+    "interest": 0.7,
+    "demand": "Cửa hàng tiện lợi gần trọ, đồ ăn liền, nhu yếu phẩm cơ bản"
+  },
+  {
+    "tag_ids": [301, 209],
+    "price_range": { "min": 100000, "max": 350000 },
+    "peak_hours": [
+      { "start": "12:00", "end": "14:00" },
+      { "start": "19:00", "end": "23:30" }
+    ],
+    "interest": 0.9,
+    "demand": "Bắt trend TikTok, săn sale sàn thương mại điện tử, thời trang dạo phố"
+  },
+  {
+    "tag_ids": [301, 210],
+    "price_range": { "min": 80000, "max": 300000 },
+    "peak_hours": [
+      { "start": "19:00", "end": "23:00" }
+    ],
+    "interest": 0.8,
+    "demand": "Mẫu mã trendy, phối đồ đi học và đi chơi, giá mềm"
+  },
+  {
+    "tag_ids": [301, 211],
+    "price_range": { "min": 100000, "max": 350000 },
+    "peak_hours": [
+      { "start": "12:00", "end": "13:30" },
+      { "start": "20:00", "end": "23:30" }
+    ],
+    "interest": 0.85,
+    "demand": "Trị mụn, kiềm dầu, chống nắng và son môi bình dân"
+  },
+  {
+    "tag_ids": [301, 212],
+    "price_range": { "min": 50000, "max": 250000 },
+    "peak_hours": [
+      { "start": "14:00", "end": "20:30" }
+    ],
+    "interest": 0.75,
+    "demand": "Cắt kiểu hợp xu hướng (layer, mullet, uốn nhẹ), thợ nhiệt tình"
+  },
+  {
+    "tag_ids": [301, 213],
+    "price_range": { "min": 150000, "max": 350000 },
+    "peak_hours": [
+      { "start": "15:00", "end": "20:30" }
+    ],
+    "interest": 0.4,
+    "demand": "Gội đầu dưỡng sinh thư giãn cuối tuần, nặn mụn cơ bản"
+  },
+  {
+    "tag_ids": [301, 214],
+    "price_range": { "min": 80000, "max": 250000 },
+    "peak_hours": [
+      { "start": "13:30", "end": "21:00" }
+    ],
+    "interest": 0.85,
+    "demand": "Làm đẹp chụp ảnh, thiết kế nailbox theo trend, nối mi tự nhiên"
+  },
+  {
+    "tag_ids": [301, 215],
+    "price_range": { "min": 20000, "max": 150000 },
+    "peak_hours": [
+      { "start": "08:00", "end": "10:00" },
+      { "start": "19:00", "end": "22:00" }
+    ],
+    "interest": 0.6,
+    "demand": "Thuốc hạ sốt, cảm cúm, viên sủi kẽm/vitamin C tăng đề kháng"
+  },
+  {
+    "tag_ids": [301, 216],
+    "price_range": { "min": 30000, "max": 180000 },
+    "peak_hours": [
+      { "start": "11:30", "end": "14:00" },
+      { "start": "19:30", "end": "23:00" }
+    ],
+    "interest": 0.9,
+    "demand": "Ốp lưng xinh xắn, kính cường lực tự dán, cáp sạc dự phòng"
+  },
+  {
+    "tag_ids": [301, 217],
+    "price_range": { "min": 50000, "max": 250000 },
+    "peak_hours": [
+      { "start": "17:00", "end": "21:00" }
+    ],
+    "interest": 0.35,
+    "demand": "Nồi lẩu mini cá nhân, ấm siêu tốc, móc áo đồ trọ"
+  },
+  {
+    "tag_ids": [301, 218],
+    "price_range": { "min": 10000, "max": 80000 },
+    "peak_hours": [
+      { "start": "07:30", "end": "11:30" },
+      { "start": "13:30", "end": "17:30" }
+    ],
+    "interest": 0.8,
+    "demand": "In tài liệu học tập, giáo trình, mua sổ tay và bút viết"
+  },
+  {
+    "tag_ids": [301, 219],
+    "price_range": { "min": 20000, "max": 50000 },
+    "peak_hours": [
+      { "start": "17:00", "end": "21:30" }
+    ],
+    "interest": 0.6,
+    "demand": "Giặt sấy tự phục vụ, giặt chăn màn vào mùa mưa"
+  },
+  {
+    "tag_ids": [301, 220],
+    "price_range": { "min": 80000, "max": 250000 },
+    "peak_hours": [
+      { "start": "08:00", "end": "11:30" },
+      { "start": "17:00", "end": "19:30" }
+    ],
+    "interest": 0.55,
+    "demand": "Vá vỏ ruột xe cấp tốc, thay nhớt định kỳ tiết kiệm xăng"
+  },
+  {
+    "tag_ids": [302, 201],
+    "price_range": { "min": 40000, "max": 90000 },
+    "peak_hours": [
+      { "start": "07:30", "end": "09:30" },
+      { "start": "13:00", "end": "15:00" }
+    ],
+    "interest": 0.9,
+    "demand": "Cà phê tỉnh táo làm việc, gặp gỡ đối tác, trà thanh nhiệt ít đường"
+  },
+  {
+    "tag_ids": [302, 202],
+    "price_range": { "min": 40000, "max": 80000 },
+    "peak_hours": [
+      { "start": "11:30", "end": "13:00" },
+      { "start": "18:00", "end": "20:00" }
+    ],
+    "interest": 0.9,
+    "demand": "Cơm trưa văn phòng, đóng gói sạch sẽ, giao hàng đúng giờ"
+  },
+  {
+    "tag_ids": [302, 203],
+    "price_range": { "min": 45000, "max": 90000 },
+    "peak_hours": [
+      { "start": "06:30", "end": "08:30" },
+      { "start": "11:45", "end": "13:00" }
+    ],
+    "interest": 0.8,
+    "demand": "Bữa sáng chất lượng, chuẩn vị gia truyền, quán có máy lạnh"
+  },
+  {
+    "tag_ids": [302, 204],
+    "price_range": { "min": 25000, "max": 55000 },
+    "peak_hours": [
+      { "start": "07:00", "end": "08:45" }
+    ],
+    "interest": 0.85,
+    "demand": "Ăn sáng gọn gàng trước giờ check-in công ty, hợp vệ sinh"
+  },
+  {
+    "tag_ids": [302, 205],
+    "price_range": { "min": 35000, "max": 90000 },
+    "peak_hours": [
+      { "start": "14:30", "end": "16:30" },
+      { "start": "19:30", "end": "22:00" }
+    ],
+    "interest": 0.7,
+    "demand": "Order xế chiều xả stress cùng đồng nghiệp, tráng miệng cùng gia đình"
+  },
+  {
+    "tag_ids": [302, 206],
+    "price_range": { "min": 250000, "max": 600000 },
+    "peak_hours": [
+      { "start": "18:00", "end": "23:00" }
+    ],
+    "interest": 0.85,
+    "demand": "Tiếp khách, tụ họp phòng ban, ăn tối gia đình cuối tuần"
+  },
+  {
+    "tag_ids": [302, 207],
+    "price_range": { "min": 150000, "max": 450000 },
+    "peak_hours": [
+      { "start": "06:30", "end": "08:00" },
+      { "start": "17:30", "end": "19:30" }
+    ],
+    "interest": 0.8,
+    "demand": "Thực phẩm an toàn, có nguồn gốc rõ ràng, sơ chế sẵn tiện nấu"
+  },
+  {
+    "tag_ids": [302, 208],
+    "price_range": { "min": 150000, "max": 600000 },
+    "peak_hours": [
+      { "start": "18:00", "end": "21:30" }
+    ],
+    "interest": 0.85,
+    "demand": "Đi siêu thị mua combo dùng cho tuần, thương hiệu uy tín"
+  },
+  {
+    "tag_ids": [302, 209],
+    "price_range": { "min": 250000, "max": 900000 },
+    "peak_hours": [
+      { "start": "12:00", "end": "13:30" },
+      { "start": "20:00", "end": "23:00" }
+    ],
+    "interest": 0.85,
+    "demand": "Đồ công sở lịch sự, tôn dáng, chất vải bền đẹp"
+  },
+  {
+    "tag_ids": [302, 210],
+    "price_range": { "min": 300000, "max": 1200000 },
+    "peak_hours": [
+      { "start": "12:30", "end": "14:00" },
+      { "start": "20:00", "end": "22:30" }
+    ],
+    "interest": 0.75,
+    "demand": "Giày êm chân di chuyển nhiều, túi xách đựng vừa laptop"
+  },
+  {
+    "tag_ids": [302, 211],
+    "price_range": { "min": 350000, "max": 1500000 },
+    "peak_hours": [
+      { "start": "12:30", "end": "13:30" },
+      { "start": "20:30", "end": "23:30" }
+    ],
+    "interest": 0.85,
+    "demand": "Chống lão hóa, phục hồi da văn phòng, mỹ phẩm chính hãng có kiểm định"
+  },
+  {
+    "tag_ids": [302, 212],
+    "price_range": { "min": 120000, "max": 800000 },
+    "peak_hours": [
+      { "start": "11:30", "end": "13:30" },
+      { "start": "18:00", "end": "20:30" }
+    ],
+    "interest": 0.75,
+    "demand": "Tạo mẫu chuyên nghiệp, nhuộm phục hồi, không gian sạch sẽ không chờ lâu"
+  },
+  {
+    "tag_ids": [302, 213],
+    "price_range": { "min": 300000, "max": 1000000 },
+    "peak_hours": [
+      { "start": "17:30", "end": "21:30" }
+    ],
+    "interest": 0.7,
+    "demand": "Massage trị liệu đau mỏi vai gáy, chăm sóc da chuyên sâu cuối tuần"
+  },
+  {
+    "tag_ids": [302, 214],
+    "price_range": { "min": 150000, "max": 500000 },
+    "peak_hours": [
+      { "start": "17:30", "end": "21:00" }
+    ],
+    "interest": 0.65,
+    "demand": "Chăm sóc móng thanh lịch nơi công sở, quy trình vệ sinh an toàn"
+  },
+  {
+    "tag_ids": [302, 215],
+    "price_range": { "min": 80000, "max": 500000 },
+    "peak_hours": [
+      { "start": "08:00", "end": "10:00" },
+      { "start": "18:30", "end": "21:30" }
+    ],
+    "interest": 0.85,
+    "demand": "Viên uống bổ mắt, vitamin tổng hợp, men vi sinh, thuốc theo đơn cho gia đình"
+  },
+  {
+    "tag_ids": [302, 216],
+    "price_range": { "min": 100000, "max": 600000 },
+    "peak_hours": [
+      { "start": "12:00", "end": "14:00" },
+      { "start": "20:00", "end": "22:30" }
+    ],
+    "interest": 0.75,
+    "demand": "Sạc nhanh Type-C/MagSafe, dock sạc đa năng bàn làm việc, tai nghe chống ồn"
+  },
+  {
+    "tag_ids": [302, 217],
+    "price_range": { "min": 150000, "max": 1500000 },
+    "peak_hours": [
+      { "start": "19:00", "end": "22:00" }
+    ],
+    "interest": 0.7,
+    "demand": "Đồ gia dụng thông minh tiết kiệm thời gian (nồi chiên, robot hút bụi), bảo trì nhà ở"
+  },
+  {
+    "tag_ids": [302, 218],
+    "price_range": { "min": 50000, "max": 300000 },
+    "peak_hours": [
+      { "start": "09:00", "end": "11:30" },
+      { "start": "14:00", "end": "16:30" }
+    ],
+    "interest": 0.6,
+    "demand": "In ấn hợp đồng/catalogue, quà tặng đối tác, văn phòng phẩm công ty"
+  },
+  {
+    "tag_ids": [302, 219],
+    "price_range": { "min": 50000, "max": 200000 },
+    "peak_hours": [
+      { "start": "07:30", "end": "09:00" },
+      { "start": "18:00", "end": "20:30" }
+    ],
+    "interest": 0.7,
+    "demand": "Giặt hấp vest/đầm dạ hội, là ủi sơ mi thẳng thớm, giao nhận tận nơi"
+  },
+  {
+    "tag_ids": [302, 220],
+    "price_range": { "min": 150000, "max": 600000 },
+    "peak_hours": [
+      { "start": "07:30", "end": "09:00" },
+      { "start": "17:30", "end": "19:30" }
+    ],
+    "interest": 0.7,
+    "demand": "Bảo dưỡng định kỳ xe tay ga, thay phụ tùng chính hãng, xe vận hành an toàn"
+  },
+  {
+    "tag_ids": [303, 201],
+    "price_range": { "min": 45000, "max": 110000 },
+    "peak_hours": [
+      { "start": "07:00", "end": "09:30" },
+      { "start": "13:30", "end": "15:30" }
+    ],
+    "interest": 0.85,
+    "demand": "Cà phê gặp đối tác, nước ép nguyên chất không đường, không gian yên tĩnh"
+  },
+  {
+    "tag_ids": [303, 202],
+    "price_range": { "min": 50000, "max": 100000 },
+    "peak_hours": [
+      { "start": "11:30", "end": "13:00" },
+      { "start": "18:00", "end": "19:30" }
+    ],
+    "interest": 0.8,
+    "demand": "Cơm niêu, cơm phần chất lượng cao, đồ ăn chuẩn vị gia đình, ít dầu mỡ"
+  },
+  {
+    "tag_ids": [303, 203],
+    "price_range": { "min": 50000, "max": 100000 },
+    "peak_hours": [
+      { "start": "06:30", "end": "08:30" },
+      { "start": "11:30", "end": "13:00" }
+    ],
+    "interest": 0.85,
+    "demand": "Bún phở chuẩn vị truyền thống lâu năm, nước dùng hầm xương thật, sạch sẽ"
+  },
+  {
+    "tag_ids": [303, 204],
+    "price_range": { "min": 30000, "max": 60000 },
+    "peak_hours": [
+      { "start": "06:30", "end": "08:00" }
+    ],
+    "interest": 0.8,
+    "demand": "Mua điểm tâm nhanh cho bản thân và con đi học, đóng gói cẩn thận"
+  },
+  {
+    "tag_ids": [303, 205],
+    "price_range": { "min": 40000, "max": 120000 },
+    "peak_hours": [
+      { "start": "16:00", "end": "18:00" },
+      { "start": "19:30", "end": "21:30" }
+    ],
+    "interest": 0.55,
+    "demand": "Mua bánh ngọt, chè ít ngọt, kem về cho con nhỏ và gia đình"
+  },
+  {
+    "tag_ids": [303, 206],
+    "price_range": { "min": 350000, "max": 900000 },
+    "peak_hours": [
+      { "start": "18:00", "end": "22:30" }
+    ],
+    "interest": 0.85,
+    "demand": "Tiếp khách công việc, liên hoan gia đình, nhà hàng có phòng riêng yên tĩnh"
+  },
+  {
+    "tag_ids": [303, 207],
+    "price_range": { "min": 250000, "max": 800000 },
+    "peak_hours": [
+      { "start": "06:00", "end": "07:30" },
+      { "start": "17:00", "end": "19:00" }
+    ],
+    "interest": 0.95,
+    "demand": "Thực phẩm sạch organic, thịt cá tươi sống chuẩn VietGAP, thực phẩm gia đình"
+  },
+  {
+    "tag_ids": [303, 208],
+    "price_range": { "min": 300000, "max": 1200000 },
+    "peak_hours": [
+      { "start": "09:00", "end": "11:00" },
+      { "start": "18:30", "end": "21:00" }
+    ],
+    "interest": 0.9,
+    "demand": "Đi đại siêu thị cuối tuần tích trữ, hàng tiêu dùng gia đình loại lớn"
+  },
+  {
+    "tag_ids": [303, 209],
+    "price_range": { "min": 400000, "max": 1800000 },
+    "peak_hours": [
+      { "start": "12:00", "end": "13:30" },
+      { "start": "19:30", "end": "21:30" }
+    ],
+    "interest": 0.75,
+    "demand": "Trang phục trung niên thanh lịch, chất vải cao cấp, đứng dáng, bền bỉ"
+  },
+  {
+    "tag_ids": [303, 210],
+    "price_range": { "min": 500000, "max": 2000000 },
+    "peak_hours": [
+      { "start": "19:00", "end": "21:30" }
+    ],
+    "interest": 0.7,
+    "demand": "Giày da êm chân, túi xách công sở da thật, độ bền và thương hiệu uy tín"
+  },
+  {
+    "tag_ids": [303, 211],
+    "price_range": { "min": 600000, "max": 2500000 },
+    "peak_hours": [
+      { "start": "12:30", "end": "13:30" },
+      { "start": "20:30", "end": "22:30" }
+    ],
+    "interest": 0.8,
+    "demand": "Dòng kem dưỡng nâng cơ chống lão hóa, serum mờ nám, thương hiệu dược mỹ phẩm"
+  },
+  {
+    "tag_ids": [303, 212],
+    "price_range": { "min": 150000, "max": 1000000 },
+    "peak_hours": [
+      { "start": "10:00", "end": "12:00" },
+      { "start": "17:30", "end": "20:00" }
+    ],
+    "interest": 0.75,
+    "demand": "Nhuộm phủ bạc an toàn thảo dược, cắt kiểu tóc chín chắn, dịch vụ salon trọn gói"
+  },
+  {
+    "tag_ids": [303, 213],
+    "price_range": { "min": 400000, "max": 1500000 },
+    "peak_hours": [
+      { "start": "14:00", "end": "17:00" },
+      { "start": "18:30", "end": "21:00" }
+    ],
+    "interest": 0.8,
+    "demand": "Massage bấm huyệt trị liệu thoái hóa đốt sống, thải độc body cuối tuần"
+  },
+  {
+    "tag_ids": [303, 214],
+    "price_range": { "min": 150000, "max": 400000 },
+    "peak_hours": [
+      { "start": "14:00", "end": "17:30" }
+    ],
+    "interest": 0.6,
+    "demand": "Sơn gel nhẹ nhàng, chăm sóc móng cắt da sạch sẽ, hạn chế vẽ cầu kỳ"
+  },
+  {
+    "tag_ids": [303, 215],
+    "price_range": { "min": 150000, "max": 900000 },
+    "peak_hours": [
+      { "start": "08:00", "end": "10:00" },
+      { "start": "18:00", "end": "21:00" }
+    ],
+    "interest": 0.9,
+    "demand": "Thực phẩm chức năng bổ xương khớp, bổ gan, omega 3, thuốc men gia đình"
+  },
+  {
+    "tag_ids": [303, 216],
+    "price_range": { "min": 150000, "max": 700000 },
+    "peak_hours": [
+      { "start": "11:30", "end": "13:30" },
+      { "start": "19:00", "end": "21:00" }
+    ],
+    "interest": 0.65,
+    "demand": "Củ sạc công suất lớn, pin sạc dự phòng chính hãng, bao da bảo vệ điện thoại"
+  },
+  {
+    "tag_ids": [303, 217],
+    "price_range": { "min": 300000, "max": 3000000 },
+    "peak_hours": [
+      { "start": "10:00", "end": "12:00" },
+      { "start": "19:00", "end": "21:30" }
+    ],
+    "interest": 0.85,
+    "demand": "Thiết bị lọc nước, máy lọc không khí, nâng cấp nội thất thiết bị nhà bếp"
+  },
+  {
+    "tag_ids": [303, 218],
+    "price_range": { "min": 60000, "max": 400000 },
+    "peak_hours": [
+      { "start": "08:30", "end": "11:00" },
+      { "start": "14:30", "end": "17:00" }
+    ],
+    "interest": 0.65,
+    "demand": "Mua đồ dùng học tập cho con vào đầu năm học, in ấn hồ sơ hành chính"
+  },
+  {
+    "tag_ids": [303, 219],
+    "price_range": { "min": 80000, "max": 350000 },
+    "peak_hours": [
+      { "start": "07:30", "end": "09:00" },
+      { "start": "17:30", "end": "19:30" }
+    ],
+    "interest": 0.65,
+    "demand": "Giặt khô rèm cửa, chăn ga đệm lớn gia đình, veston làm việc"
+  },
+  {
+    "tag_ids": [303, 220],
+    "price_range": { "min": 200000, "max": 800000 },
+    "peak_hours": [
+      { "start": "08:00", "end": "10:30" },
+      { "start": "16:30", "end": "18:30" }
+    ],
+    "interest": 0.7,
+    "demand": "Bảo dưỡng định kỳ tiệm chính hãng, kiểm tra an toàn thắng phanh cho xe gia đình"
+  },
+  {
+    "tag_ids": [304, 201],
+    "price_range": { "min": 25000, "max": 60000 },
+    "peak_hours": [
+      { "start": "06:00", "end": "08:30" },
+      { "start": "14:30", "end": "16:30" }
+    ],
+    "interest": 0.7,
+    "demand": "Cà phê đen đá sáng sớm, ấm trà mạn, không gian thoáng đãng nói chuyện bạn già"
+  },
+  {
+    "tag_ids": [304, 202],
+    "price_range": { "min": 35000, "max": 70000 },
+    "peak_hours": [
+      { "start": "11:00", "end": "12:30" },
+      { "start": "17:30", "end": "19:00" }
+    ],
+    "interest": 0.6,
+    "demand": "Cơm nấu mềm dẻo, món thanh đạm, ít bột ngọt gia vị, có canh rau dễ nuốt"
+  },
+  {
+    "tag_ids": [304, 203],
+    "price_range": { "min": 40000, "max": 75000 },
+    "peak_hours": [
+      { "start": "06:00", "end": "08:00" },
+      { "start": "17:00", "end": "18:30" }
+    ],
+    "interest": 0.8,
+    "demand": "Phở mềm, cháo nóng dưỡng sinh, nước dùng thanh vị không cay nồng"
+  },
+  {
+    "tag_ids": [304, 204],
+    "price_range": { "min": 20000, "max": 45000 },
+    "peak_hours": [
+      { "start": "06:00", "end": "07:30" }
+    ],
+    "interest": 0.75,
+    "demand": "Xôi mềm, bánh bao chay/thịt ít mỡ, đồ ăn sáng nhẹ bụng dễ tiêu hóa"
+  },
+  {
+    "tag_ids": [304, 205],
+    "price_range": { "min": 20000, "max": 50000 },
+    "peak_hours": [
+      { "start": "15:00", "end": "17:00" }
+    ],
+    "interest": 0.45,
+    "demand": "Chè dưỡng nhan, sữa hạt, tàu hũ nóng thanh mát chiều mát"
+  },
+  {
+    "tag_ids": [304, 206],
+    "price_range": { "min": 250000, "max": 600000 },
+    "peak_hours": [
+      { "start": "17:30", "end": "20:30" }
+    ],
+    "interest": 0.5,
+    "demand": "Họp mặt đại gia đình, đám giỗ, nhà hàng ẩm thực truyền thống ấm cúng"
+  },
+  {
+    "tag_ids": [304, 207],
+    "price_range": { "min": 100000, "max": 350000 },
+    "peak_hours": [
+      { "start": "05:30", "end": "07:30" }
+    ],
+    "interest": 0.9,
+    "demand": "Đi chợ truyền thống sáng sớm, chọn cá tươi rau sạch, quen mặt người bán"
+  },
+  {
+    "tag_ids": [304, 208],
+    "price_range": { "min": 80000, "max": 300000 },
+    "peak_hours": [
+      { "start": "07:30", "end": "09:30" },
+      { "start": "16:30", "end": "18:00" }
+    ],
+    "interest": 0.8,
+    "demand": "Mua đồ tạp hóa quen thuộc gần nhà, trả tiền mặt nhanh, tin cậy quen biết"
+  },
+  {
+    "tag_ids": [304, 209],
+    "price_range": { "min": 200000, "max": 700000 },
+    "peak_hours": [
+      { "start": "08:30", "end": "10:30" },
+      { "start": "16:00", "end": "18:00" }
+    ],
+    "interest": 0.55,
+    "demand": "Trang phục nhã nhặn, chất liệu lụa hoặc đũi mát mẻ, rộng rãi thoải mái"
+  },
+  {
+    "tag_ids": [304, 210],
+    "price_range": { "min": 200000, "max": 600000 },
+    "peak_hours": [
+      { "start": "08:30", "end": "10:30" }
+    ],
+    "interest": 0.5,
+    "demand": "Giày lười chống trơn trượt tuyệt đối, đế êm nâng đỡ bàn chân người già"
+  },
+  {
+    "tag_ids": [304, 211],
+    "price_range": { "min": 200000, "max": 800000 },
+    "peak_hours": [
+      { "start": "09:00", "end": "11:00" }
+    ],
+    "interest": 0.5,
+    "demand": "Dầu tràm, thảo mộc dưỡng thể, sữa dưỡng ẩm lành tính chiết xuất thiên nhiên"
+  },
+  {
+    "tag_ids": [304, 212],
+    "price_range": { "min": 50000, "max": 300000 },
+    "peak_hours": [
+      { "start": "07:30", "end": "10:00" }
+    ],
+    "interest": 0.7,
+    "demand": "Cắt tóc gọn gàng sáng sủa, nhuộm đen tóc bạc định kỳ tại tiệm quen"
+  },
+  {
+    "tag_ids": [304, 213],
+    "price_range": { "min": 200000, "max": 600000 },
+    "peak_hours": [
+      { "start": "08:30", "end": "11:00" },
+      { "start": "14:00", "end": "16:30" }
+    ],
+    "interest": 0.75,
+    "demand": "Ngâm chân thảo dược, xoa bóp day ấn huyệt, trị liệu đau nhức khớp gối"
+  },
+  {
+    "tag_ids": [304, 214],
+    "price_range": { "min": 50000, "max": 150000 },
+    "peak_hours": [
+      { "start": "08:30", "end": "11:00" }
+    ],
+    "interest": 0.35,
+    "demand": "Cắt da móng tay chân sạch sẽ, lấy khóe êm ái, giữ vệ sinh móng"
+  },
+  {
+    "tag_ids": [304, 215],
+    "price_range": { "min": 200000, "max": 1200000 },
+    "peak_hours": [
+      { "start": "07:00", "end": "09:30" },
+      { "start": "16:00", "end": "18:30" }
+    ],
+    "interest": 0.95,
+    "demand": "Thuốc huyết áp, tiểu đường theo đơn, sữa dinh dưỡng người cao tuổi, cao xoa bóp"
+  },
+  {
+    "tag_ids": [304, 216],
+    "price_range": { "min": 80000, "max": 350000 },
+    "peak_hours": [
+      { "start": "09:00", "end": "11:00" }
+    ],
+    "interest": 0.45,
+    "demand": "Thay kính cường lực bảo vệ mắt, mua dây sạc to bền, giá đỡ điện thoại xem tin tức"
+  },
+  {
+    "tag_ids": [304, 217],
+    "price_range": { "min": 100000, "max": 1000000 },
+    "peak_hours": [
+      { "start": "08:30", "end": "11:00" }
+    ],
+    "interest": 0.65,
+    "demand": "Sửa chữa ống nước, thay bóng đèn LED chống mỏi mắt, đồ điện tử phím to dễ bấm"
+  },
+  {
+    "tag_ids": [304, 218],
+    "price_range": { "min": 30000, "max": 200000 },
+    "peak_hours": [
+      { "start": "08:00", "end": "10:30" }
+    ],
+    "interest": 0.4,
+    "demand": "In sao giấy tờ công chứng căn cước/bảo hiểm y tế, mua lịch Tết, báo giấy"
+  },
+  {
+    "tag_ids": [304, 219],
+    "price_range": { "min": 50000, "max": 180000 },
+    "peak_hours": [
+      { "start": "08:00", "end": "10:00" }
+    ],
+    "interest": 0.45,
+    "demand": "Gửi tiệm giặt sấy mền nặng hoặc áo dài đi lễ chùa"
+  },
+  {
+    "tag_ids": [304, 220],
+    "price_range": { "min": 100000, "max": 400000 },
+    "peak_hours": [
+      { "start": "07:30", "end": "09:30" }
+    ],
+    "interest": 0.6,
+    "demand": "Bơm lốp, thay nhớt định kỳ, kiểm tra phanh thắng nhạy để đi chợ an toàn"
   }
 ]

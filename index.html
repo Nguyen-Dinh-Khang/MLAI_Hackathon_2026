@@ -504,24 +504,28 @@
         </div>
 
         <form id="form_db5" onsubmit="submitForm(event, 'db5')" class="space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Phân Khúc Khách Hàng (segment) *</label>
-              <input type="text" id="mkt_segment" required placeholder="Nhập phân khúc khách hàng..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-            </div>
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Mức Chi Trả / Suất (price_tolerance) *</label>
-              <input type="text" id="mkt_budget" required placeholder="Nhập mức chi trả / suất..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-            </div>
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Khung Giờ Cao Điểm (peak_traffic) *</label>
-              <input type="text" id="mkt_peak" required placeholder="Nhập khung giờ cao điểm..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-            </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Nhu Cầu & Kỳ Vọng Của Khách Hàng (demand) *</label>
+            <textarea id="mkt_demand" required rows="2" placeholder="Ví dụ: Bún phở chuẩn vị truyền thống lâu năm, nước dùng hầm xương thật, sạch sẽ..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
           </div>
 
-          <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Thói Quen & Hành Vi Tiêu Dùng (behavior_notes) *</label>
-            <textarea id="mkt_behavior" required rows="2" placeholder="Nhập thói quen & hành vi tiêu dùng..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Giá Min (VNĐ) *</label>
+              <input type="number" id="mkt_price_min" required placeholder="VD: 30000" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Giá Max (VNĐ) *</label>
+              <input type="number" id="mkt_price_max" required placeholder="VD: 60000" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Khung Giờ Cao Điểm *</label>
+              <input type="text" id="mkt_peak_hours" required placeholder="VD: 06:30-08:30, 11:30-13:00" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Độ Quan Tâm (interest: 0 - 1.0) *</label>
+              <input type="number" step="0.01" min="0" max="1" id="mkt_interest" required value="0.85" placeholder="VD: 0.85" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
           </div>
 
           <!-- Section Chọn Tags cho DB5 (tag_ids) -->
@@ -949,11 +953,11 @@
         return title.length > 0 && takeaway.length > 0;
       }
       if (formType === "db5") {
-        const segment = document.getElementById("mkt_segment")?.value?.trim() || "";
-        const budget = document.getElementById("mkt_budget")?.value?.trim() || "";
-        const peak = document.getElementById("mkt_peak")?.value?.trim() || "";
-        const behavior = document.getElementById("mkt_behavior")?.value?.trim() || "";
-        return segment.length > 0 && budget.length > 0 && peak.length > 0 && behavior.length > 0;
+        const demand = document.getElementById("mkt_demand")?.value?.trim() || "";
+        const pMin = document.getElementById("mkt_price_min")?.value?.trim() || "";
+        const pMax = document.getElementById("mkt_price_max")?.value?.trim() || "";
+        const peak = document.getElementById("mkt_peak_hours")?.value?.trim() || "";
+        return demand.length > 0 && pMin !== "" && pMax !== "" && peak.length > 0;
       }
       if (formType === "user_plan") {
         const loc = document.getElementById("user_location")?.value?.trim() || "";
@@ -1039,10 +1043,11 @@
         selectedSpecialTags.db4.clear();
         renderSpecialTagChips("exp_tags_container", TAGS_DB4_EXPERIENCES, selectedSpecialTags.db4, "db4", "active-indigo");
       } else if (formType === "db5") {
-        document.getElementById("mkt_segment").value = "";
-        document.getElementById("mkt_budget").value = "";
-        document.getElementById("mkt_peak").value = "";
-        document.getElementById("mkt_behavior").value = "";
+        document.getElementById("mkt_demand").value = "";
+        document.getElementById("mkt_price_min").value = "";
+        document.getElementById("mkt_price_max").value = "";
+        document.getElementById("mkt_peak_hours").value = "";
+        document.getElementById("mkt_interest").value = "0.85";
         selectedProducts.mkt.clear();
         renderProductChips("mkt_products_container", "mkt");
         selectedSpecialTags.db5.clear();
@@ -1111,6 +1116,24 @@
       } catch (err) {
         document.getElementById("mongoStatusText").innerText = "Server: Standalone Mode (Sẵn sàng nộp)";
       }
+    }
+
+    // Hàm phân tích chuỗi giờ cao điểm (VD: "06:30-08:30, 11:30-13:00") thành mảng objects [{start, end}]
+    function parsePeakHours(str) {
+      if (!str) return [];
+      const parts = str.split(/[,;\n]+/);
+      const result = [];
+      for (const part of parts) {
+        const trimmed = part.trim();
+        if (!trimmed) continue;
+        const match = trimmed.match(/(\d{1,2}:\d{2})\s*[-–—]\s*(\d{1,2}:\d{2})/);
+        if (match) {
+          result.push({ start: match[1], end: match[2] });
+        } else {
+          result.push({ start: trimmed, end: trimmed });
+        }
+      }
+      return result;
     }
 
     // Nộp Form lên Backend API (Chuẩn hóa 100% theo thuộc tính đặc tả)
@@ -1219,8 +1242,8 @@
           embedding: []
         };
       }
-      // 5. DB5: THỊ TRƯỜNG & HÀNH VI (market_segments)
-      // Thuộc tính: tag_ids, segment, price_tolerance, peak_traffic, behavior_notes, embedding
+      // 5. DB5: THỊ TRƯỜNG & NHU CẦU (market_segments)
+      // Thuộc tính mới: tag_ids, price_range, peak_hours, interest, demand, embedding
       else if (formType === "db5") {
         collectionName = "market_segments";
         const tagIds = Array.from(new Set([
@@ -1228,12 +1251,17 @@
           ...Array.from(selectedProducts.mkt)
         ]));
 
+        const minPrice = parseInt(document.getElementById("mkt_price_min").value) || 0;
+        const maxPrice = parseInt(document.getElementById("mkt_price_max").value) || 0;
+        const interestVal = parseFloat(document.getElementById("mkt_interest").value) || 0.85;
+        const peakStr = document.getElementById("mkt_peak_hours").value.trim();
+
         payload = {
           tag_ids: tagIds,
-          segment: document.getElementById("mkt_segment").value.trim(),
-          price_tolerance: document.getElementById("mkt_budget").value.trim(),
-          peak_traffic: document.getElementById("mkt_peak").value.trim(),
-          behavior_notes: document.getElementById("mkt_behavior").value.trim(),
+          price_range: { min: minPrice, max: maxPrice },
+          peak_hours: parsePeakHours(peakStr),
+          interest: interestVal,
+          demand: document.getElementById("mkt_demand").value.trim(),
           embedding: []
         };
       }
@@ -1404,13 +1432,24 @@
               </div>
             `;
           } else if (col === "market_segments") {
+            const priceStr = doc.price_range 
+              ? `${(doc.price_range.min || 0).toLocaleString()}đ - ${(doc.price_range.max || 0).toLocaleString()}đ` 
+              : (doc.price_tolerance || 'N/A');
+            const peakStr = (doc.peak_hours && Array.isArray(doc.peak_hours))
+              ? doc.peak_hours.map(p => `${p.start} - ${p.end}`).join(', ')
+              : (doc.peak_traffic || 'N/A');
+            const interestStr = doc.interest !== undefined 
+              ? `<span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded font-semibold text-[11px]"><i class="fa-solid fa-fire text-amber-500"></i> Nhu cầu: ${Math.round(doc.interest * 100)}% (${doc.interest})</span>` 
+              : '';
+
             detailInfo = `
-              <div class="text-xs text-blue-950 bg-blue-50/80 p-3 rounded-lg mt-2 space-y-1.5 border border-blue-100">
-                <div class="flex flex-wrap gap-4">
-                  <span><i class="fa-solid fa-money-bill-wave text-blue-600"></i> Mức chi trả: <strong>${doc.price_tolerance}</strong></span>
-                  <span><i class="fa-solid fa-clock text-blue-600"></i> Giờ cao điểm: <strong>${doc.peak_traffic}</strong></span>
+              <div class="text-xs text-blue-950 bg-blue-50/80 p-3 rounded-lg mt-2 space-y-2 border border-blue-100">
+                <div class="flex flex-wrap items-center gap-3">
+                  <span><i class="fa-solid fa-money-bill-wave text-blue-600"></i> Khoảng giá: <strong>${priceStr}</strong></span>
+                  <span><i class="fa-solid fa-clock text-blue-600"></i> Giờ cao điểm: <strong>${peakStr}</strong></span>
+                  ${interestStr}
                 </div>
-                <p class="text-slate-700 leading-relaxed"><span class="font-bold">Hành vi & Đặc điểm:</span> ${doc.behavior_notes}</p>
+                <p class="text-slate-800 leading-relaxed"><span class="font-bold text-blue-900">Nhu cầu & Kỳ vọng:</span> ${doc.demand || doc.behavior_notes || doc.segment || ''}</p>
               </div>
             `;
           } else if (col === "business_requests") {
@@ -1563,24 +1602,38 @@
           </div>
         `;
       } else if (col === "market_segments") {
+        const pMin = doc.price_range?.min !== undefined ? doc.price_range.min : '';
+        const pMax = doc.price_range?.max !== undefined ? doc.price_range.max : '';
+        const peakStr = (doc.peak_hours && Array.isArray(doc.peak_hours))
+          ? doc.peak_hours.map(p => `${p.start}-${p.end}`).join(', ')
+          : (doc.peak_traffic || '');
+        const interestVal = doc.interest !== undefined ? doc.interest : 0.85;
+        const demandText = doc.demand || doc.behavior_notes || doc.segment || '';
+
         fieldsContainer.innerHTML = `
           <div>
-            <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Phân Khúc Khách Hàng (segment) *</label>
-            <input type="text" id="edit_mkt_segment" value="${doc.segment || ''}" required class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-blue-500">
+            <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Nhu Cầu & Kỳ Vọng (demand) *</label>
+            <textarea id="edit_mkt_demand" rows="2" required class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-blue-500">${demandText}</textarea>
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Mức Chi Trả (price_tolerance) *</label>
-              <input type="text" id="edit_mkt_price" value="${doc.price_tolerance || ''}" required class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-blue-500">
+              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Giá Min (VNĐ) *</label>
+              <input type="number" id="edit_mkt_price_min" value="${pMin}" required class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
-              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Khung Giờ Cao Điểm (peak_traffic) *</label>
-              <input type="text" id="edit_mkt_peak" value="${doc.peak_traffic || ''}" required class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-blue-500">
+              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Giá Max (VNĐ) *</label>
+              <input type="number" id="edit_mkt_price_max" value="${pMax}" required class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-blue-500">
             </div>
           </div>
-          <div>
-            <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Hành Vi & Đặc Điểm (behavior_notes) *</label>
-            <textarea id="edit_mkt_notes" rows="3" required class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-blue-500">${doc.behavior_notes || ''}</textarea>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Khung Giờ Cao Điểm *</label>
+              <input type="text" id="edit_mkt_peak" value="${peakStr}" placeholder="VD: 06:30-08:30, 11:30-13:00" required class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Độ Quan Tâm (interest: 0 - 1.0) *</label>
+              <input type="number" step="0.01" min="0" max="1" id="edit_mkt_interest" value="${interestVal}" required class="w-full px-3 py-2 border rounded-lg text-xs focus:ring-2 focus:ring-blue-500">
+            </div>
           </div>
           <div>
             <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Danh Sách Tag IDs (cách nhau dấu phẩy)</label>
@@ -1709,11 +1762,16 @@
           tag_ids: parseNumList(document.getElementById("edit_exp_tags").value)
         };
       } else if (col === "market_segments") {
+        const minPrice = parseInt(document.getElementById("edit_mkt_price_min").value) || 0;
+        const maxPrice = parseInt(document.getElementById("edit_mkt_price_max").value) || 0;
+        const interestVal = parseFloat(document.getElementById("edit_mkt_interest").value) || 0.85;
+        const peakStr = document.getElementById("edit_mkt_peak").value.trim();
+
         updatedDocument = {
-          segment: document.getElementById("edit_mkt_segment").value.trim(),
-          price_tolerance: document.getElementById("edit_mkt_price").value.trim(),
-          peak_traffic: document.getElementById("edit_mkt_peak").value.trim(),
-          behavior_notes: document.getElementById("edit_mkt_notes").value.trim(),
+          demand: document.getElementById("edit_mkt_demand").value.trim(),
+          price_range: { min: minPrice, max: maxPrice },
+          peak_hours: parsePeakHours(peakStr),
+          interest: interestVal,
           tag_ids: parseNumList(document.getElementById("edit_mkt_tags").value)
         };
       } else if (col === "competitors") {
