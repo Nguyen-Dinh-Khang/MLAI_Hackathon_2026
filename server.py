@@ -321,8 +321,9 @@ class MLAIHttpHandler(BaseHTTPRequestHandler):
             tag_filter = query_params.get("tag", [""])[0].strip()
             severity_filter = query_params.get("severity", [""])[0].strip()
             model_filter = query_params.get("model_id", [""])[0].strip()
-            limit = int(query_params.get("limit", [100])[0])
+            limit = int(query_params.get("limit", [5000])[0])
             skip = int(query_params.get("skip", [0])[0])
+            clean_mode = query_params.get("clean", ["0"])[0] in ["1", "true"]
 
             db = init_mongo_connection()
             docs = []
@@ -397,6 +398,13 @@ class MLAIHttpHandler(BaseHTTPRequestHandler):
             else:
                 docs = get_from_json_fallback(col_name)
                 total_count = len(docs)
+
+            if clean_mode:
+                for d in docs:
+                    d.pop("_id", None)
+                    d.pop("embedding", None)
+                    d.pop("has_vector", None)
+                    d.pop("vector_dim", None)
 
             self._set_json_headers(200)
             payload = {
@@ -576,6 +584,7 @@ class MLAIHttpHandler(BaseHTTPRequestHandler):
 def run_server():
     server_address = ("", PORT)
     httpd = HTTPServer(server_address, MLAIHttpHandler)
+    print("[GEMINI-ON]")
     print("\n" + "=" * 65)
     print(f"🚀 MLAI DATA INGESTION & MANAGEMENT SERVER ĐANG CHẠY TẠI:")
     print(f"👉 http://localhost:{PORT}")

@@ -638,16 +638,16 @@
     </section>
 
     <!-- ================================================================= -->
-    <!-- TAB 7: DATA EXPLORER (XEM DỮ LIỆU ĐÃ NỘP)                         -->
+    <!-- TAB 7: DATA EXPLORER (XEM DỮ LIỆU ĐÃ NỘP - DẠNG JSON)            -->
     <!-- ================================================================= -->
     <section id="tab-explorer" class="tab-content hidden">
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
         <div class="flex flex-wrap items-center justify-between border-b pb-4 mb-5 gap-3">
           <div>
             <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
-              <i class="fa-solid fa-table-list text-emerald-600"></i> Quản Trị & Tìm Kiếm Dữ Liệu MongoDB
+              <i class="fa-solid fa-code text-emerald-600"></i> Xem Dữ Liệu Đã Lưu (JSON Format)
             </h2>
-            <p class="text-xs text-slate-500 mt-1">Tìm kiếm, lọc thông minh theo Tag/Severity, sửa và xóa trực tiếp trên MongoDB Atlas</p>
+            <p class="text-xs text-slate-500 mt-1">Dữ liệu hiển thị dạng JSON chuẩn hóa, hỗ trợ sao chép toàn bộ trong 1 lần (đã loại bỏ thuộc tính <code class="text-rose-600 font-mono">_id</code> và <code class="text-rose-600 font-mono">embedding</code>)</p>
           </div>
           <div class="flex items-center gap-2">
             <select id="explorer_collection" onchange="onCollectionChange()" class="px-3 py-2 border border-slate-300 rounded-lg text-xs font-bold bg-white text-slate-700 shadow-sm focus:ring-2 focus:ring-emerald-500">
@@ -658,14 +658,14 @@
               <option value="areas">📍 DB1: Khu Vực (areas)</option>
               <option value="business_requests">🚀 Kế Hoạch User (business_requests)</option>
             </select>
-            <button onclick="loadSubmittedData()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition flex items-center gap-1">
+            <button onclick="loadSubmittedData()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition flex items-center gap-1 cursor-pointer">
               <i class="fa-solid fa-rotate"></i> Làm mới
             </button>
           </div>
         </div>
 
         <!-- SEARCH & FILTER TOOLBAR -->
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6 space-y-3">
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-5 space-y-3">
           <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
             <!-- Keyword search -->
             <div class="md:col-span-5">
@@ -713,10 +713,10 @@
 
             <!-- Filter and Reset buttons -->
             <div class="md:col-span-2 flex items-end gap-2">
-              <button onclick="loadSubmittedData()" class="flex-1 py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow transition flex items-center justify-center gap-1.5">
+              <button onclick="loadSubmittedData()" class="flex-1 py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow transition flex items-center justify-center gap-1.5 cursor-pointer">
                 <i class="fa-solid fa-filter"></i> Lọc
               </button>
-              <button onclick="resetFilters()" class="py-2 px-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-semibold transition" title="Xóa bộ lọc">
+              <button onclick="resetFilters()" class="py-2 px-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-semibold transition cursor-pointer" title="Xóa bộ lọc">
                 <i class="fa-solid fa-xmark"></i>
               </button>
             </div>
@@ -726,8 +726,32 @@
           <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-200">
             <span id="explorer_stats" class="font-medium text-slate-700">Đang chuẩn bị truy vấn...</span>
             <span class="text-[11px] text-slate-400 flex items-center gap-1">
-              <i class="fa-solid fa-bolt text-amber-500"></i> Index B-Tree & Compound Index trên MongoDB Atlas
+              <i class="fa-solid fa-bolt text-amber-500"></i> Dữ liệu tự động đồng bộ theo bộ lọc
             </span>
+          </div>
+        </div>
+
+        <!-- VIEW MODE SELECTOR & ACTIONS TOOLBAR -->
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <!-- View Toggle -->
+          <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
+            <button id="view_mode_json" onclick="setExplorerViewMode('json')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-white text-emerald-700 shadow-sm cursor-pointer">
+              <i class="fa-solid fa-code"></i> Dạng JSON (Mặc định)
+            </button>
+            <button id="view_mode_cards" onclick="setExplorerViewMode('cards')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 text-slate-600 hover:text-slate-800 cursor-pointer">
+              <i class="fa-solid fa-table-cells-large"></i> Dạng Thẻ Chi Tiết
+            </button>
+          </div>
+
+          <!-- Quick Action Buttons -->
+          <div class="flex items-center gap-2">
+            <button onclick="copyExplorerJson()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 cursor-pointer" title="Sao chép toàn bộ dữ liệu JSON trong 1 lần (đã loại bỏ _id và embedding)">
+              <i class="fa-regular fa-copy text-sm"></i>
+              <span id="btn_copy_all_text">Sao chép toàn bộ JSON</span>
+            </button>
+            <button onclick="downloadExplorerJson()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer" title="Tải file JSON về máy tính">
+              <i class="fa-solid fa-download"></i> Tải .json
+            </button>
           </div>
         </div>
 
@@ -736,8 +760,42 @@
           <p class="text-xs">Đang truy vấn dữ liệu từ MongoDB Atlas...</p>
         </div>
 
-        <div id="explorer_container" class="space-y-3">
-          <!-- Render danh sách bản ghi qua JS -->
+        <!-- JSON VIEW CONTAINER (HIỂN THỊ MẶC ĐỊNH) -->
+        <div id="explorer_json_container" class="space-y-2">
+          <div class="relative rounded-2xl overflow-hidden border border-slate-800 bg-[#0f172a] shadow-xl">
+            <!-- Code Editor Header Bar -->
+            <div class="flex items-center justify-between px-4 py-2.5 bg-slate-800/90 border-b border-slate-700 text-slate-300 text-xs">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+                <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+                <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+                <span id="json_filename_badge" class="font-mono text-emerald-400 font-semibold ml-2">problems.json</span>
+                <span class="text-slate-500">•</span>
+                <span id="json_count_badge" class="bg-emerald-950 text-emerald-300 border border-emerald-700/50 px-2.5 py-0.5 rounded-full text-[11px] font-medium">0 bản ghi</span>
+                <span class="text-slate-500">•</span>
+                <span id="json_size_badge" class="text-slate-400 font-mono text-[11px]">0 KB</span>
+                <span class="text-slate-500">•</span>
+                <span class="text-amber-400 text-[11px] font-medium flex items-center gap-1">
+                  <i class="fa-solid fa-ban text-xs"></i> Đã bỏ _id & embedding
+                </span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="copyExplorerJson()" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer">
+                  <i class="fa-regular fa-copy"></i> Copy
+                </button>
+              </div>
+            </div>
+            <!-- Code Textarea -->
+            <div class="p-1">
+              <textarea id="explorer_json_textarea" readonly spellcheck="false" class="w-full h-[550px] p-4 bg-transparent text-emerald-300 font-mono text-xs leading-relaxed focus:outline-none resize-y selection:bg-emerald-700 selection:text-white border-0" placeholder="Đang tải dữ liệu JSON..."></textarea>
+            </div>
+          </div>
+          <p class="text-[11px] text-slate-400 italic">💡 Mẹo: Bạn có thể bấm nút "Sao chép toàn bộ JSON" phía trên hoặc bấm vào khung rồi nhấn <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded font-mono text-[10px] text-slate-700">Ctrl+A</kbd> và <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded font-mono text-[10px] text-slate-700">Ctrl+C</kbd> để copy toàn bộ trong một lần.</p>
+        </div>
+
+        <!-- CARDS VIEW CONTAINER (ẨN MẶC ĐỊNH) -->
+        <div id="explorer_cards_container" class="space-y-3 hidden">
+          <!-- Render danh sách bản ghi dạng thẻ qua JS -->
         </div>
       </div>
     </section>
@@ -1333,6 +1391,148 @@
       loadSubmittedData();
     }
 
+    // Quản lý chế độ xem: 'json' (mặc định) hoặc 'cards'
+    let explorerViewMode = "json";
+
+    function setExplorerViewMode(mode) {
+      explorerViewMode = mode;
+      const jsonContainer = document.getElementById("explorer_json_container");
+      const cardsContainer = document.getElementById("explorer_cards_container");
+      const btnJson = document.getElementById("view_mode_json");
+      const btnCards = document.getElementById("view_mode_cards");
+
+      if (mode === "json") {
+        if (jsonContainer) jsonContainer.classList.remove("hidden");
+        if (cardsContainer) cardsContainer.classList.add("hidden");
+        if (btnJson) {
+          btnJson.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-white text-emerald-700 shadow-sm cursor-pointer";
+        }
+        if (btnCards) {
+          btnCards.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 text-slate-600 hover:text-slate-800 cursor-pointer";
+        }
+      } else {
+        if (jsonContainer) jsonContainer.classList.add("hidden");
+        if (cardsContainer) cardsContainer.classList.remove("hidden");
+        if (btnJson) {
+          btnJson.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 text-slate-600 hover:text-slate-800 cursor-pointer";
+        }
+        if (btnCards) {
+          btnCards.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-white text-emerald-700 shadow-sm cursor-pointer";
+        }
+      }
+    }
+
+    // Hàm loại bỏ hoàn toàn _id và embedding theo yêu cầu người dùng
+    function cleanDocument(doc) {
+      if (!doc || typeof doc !== "object") return doc;
+      const clean = {};
+      for (const [key, val] of Object.entries(doc)) {
+        if (key === "_id" || key === "embedding" || key === "has_vector" || key === "vector_dim") {
+          continue;
+        }
+        clean[key] = val;
+      }
+      return clean;
+    }
+
+    // Sao chép toàn bộ dữ liệu JSON trong 1 lần
+    function copyExplorerJson() {
+      const textarea = document.getElementById("explorer_json_textarea");
+      if (!textarea || !textarea.value.trim() || textarea.value.trim() === "[]") {
+        showToast("Không có dữ liệu JSON để sao chép!", false);
+        return;
+      }
+      const textToCopy = textarea.value;
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          handleCopySuccess();
+        }).catch(() => {
+          fallbackCopyText(textarea);
+        });
+      } else {
+        fallbackCopyText(textarea);
+      }
+    }
+
+    function fallbackCopyText(textarea) {
+      try {
+        textarea.focus();
+        textarea.select();
+        document.execCommand('copy');
+        handleCopySuccess();
+      } catch (err) {
+        showToast("Vui lòng click vào khung JSON rồi nhấn Ctrl+A và Ctrl+C để copy.", false);
+      }
+    }
+
+    function handleCopySuccess() {
+      const btnAll = document.getElementById("btn_copy_all_text");
+      if (btnAll) {
+        const prev = btnAll.innerText;
+        btnAll.innerText = "✓ Đã sao chép!";
+        setTimeout(() => {
+          btnAll.innerText = prev;
+        }, 2000);
+      }
+      showToast(`Đã sao chép toàn bộ ${currentExplorerDocs.length} bản ghi JSON vào clipboard (đã bỏ _id & embedding)!`, true);
+    }
+
+    // Tải xuống file .json
+    function downloadExplorerJson() {
+      const textarea = document.getElementById("explorer_json_textarea");
+      const col = document.getElementById("explorer_collection")?.value || "data";
+      if (!textarea || !textarea.value.trim() || textarea.value.trim() === "[]") {
+        showToast("Không có dữ liệu JSON để tải xuống!", false);
+        return;
+      }
+      const blob = new Blob([textarea.value], { type: "application/json;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${col}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast(`Đã tải xuống file ${col}.json thành công!`, true);
+    }
+
+    // Sao chép JSON của 1 bản ghi riêng lẻ (đã loại bỏ _id và embedding)
+    function copySingleDocJson(docId) {
+      const doc = currentExplorerDocs.find(d => String(d._id) === String(docId));
+      if (!doc) {
+        showToast("Không tìm thấy bản ghi để sao chép!", false);
+        return;
+      }
+      const clean = cleanDocument(doc);
+      const str = JSON.stringify(clean, null, 2);
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(str).then(() => {
+          showToast("Đã sao chép JSON của bản ghi vào clipboard (đã bỏ _id & embedding)!", true);
+        }).catch(() => {
+          fallbackCopyString(str);
+        });
+      } else {
+        fallbackCopyString(str);
+      }
+    }
+
+    function fallbackCopyString(str) {
+      try {
+        const temp = document.createElement("textarea");
+        temp.value = str;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand("copy");
+        document.body.removeChild(temp);
+        showToast("Đã sao chép JSON của bản ghi vào clipboard (đã bỏ _id & embedding)!", true);
+      } catch (e) {
+        showToast("Không thể sao chép tự động vào Clipboard", false);
+      }
+    }
+
     // Tải và Tìm kiếm dữ liệu từ MongoDB
     async function loadSubmittedData() {
       const col = document.getElementById("explorer_collection").value;
@@ -1341,14 +1541,15 @@
       const sev = document.getElementById("explorer_severity").value;
       const model = document.getElementById("explorer_model").value;
 
-      const container = document.getElementById("explorer_container");
+      const cardsContainer = document.getElementById("explorer_cards_container");
+      const jsonTextarea = document.getElementById("explorer_json_textarea");
       const loading = document.getElementById("explorer_loading");
       const stats = document.getElementById("explorer_stats");
 
       loading.classList.remove("hidden");
-      container.innerHTML = "";
+      if (cardsContainer) cardsContainer.innerHTML = "";
 
-      const params = new URLSearchParams({ collection: col, limit: "100" });
+      const params = new URLSearchParams({ collection: col, limit: "5000" });
       if (q) params.append("q", q);
       if (tag) params.append("tag", tag);
       if (sev && col === "problems") params.append("severity", sev);
@@ -1365,165 +1566,193 @@
 
         stats.innerHTML = `Hiển thị <strong>${count}</strong> / ${total} bản ghi trong collection <code class="text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">${col}</code>`;
 
+        // 1. Tạo dữ liệu JSON sạch (loại bỏ hoàn toàn _id và embedding)
+        const cleanDocs = currentExplorerDocs.map(cleanDocument);
+        const jsonStr = cleanDocs.length > 0 ? JSON.stringify(cleanDocs, null, 2) : "[]";
+
+        // 2. Cập nhật khung hiển thị JSON
+        if (jsonTextarea) {
+          jsonTextarea.value = jsonStr;
+        }
+        const filenameBadge = document.getElementById("json_filename_badge");
+        if (filenameBadge) {
+          filenameBadge.innerText = `${col}.json`;
+        }
+        const countBadge = document.getElementById("json_count_badge");
+        if (countBadge) {
+          countBadge.innerText = `${cleanDocs.length} bản ghi`;
+        }
+        const sizeBadge = document.getElementById("json_size_badge");
+        if (sizeBadge) {
+          const bytes = new Blob([jsonStr]).size;
+          const sizeKb = bytes < 1024 ? `${bytes} B` : `${(bytes / 1024).toFixed(1)} KB`;
+          sizeBadge.innerText = sizeKb;
+        }
+
+        // 3. Xử lý trường hợp không có bản ghi
         if (currentExplorerDocs.length === 0) {
-          container.innerHTML = `
-            <div class="text-center py-10 text-slate-400 border-2 border-dashed border-slate-200 rounded-xl">
-              <i class="fa-regular fa-folder-open text-4xl mb-2 text-slate-300"></i>
-              <p class="text-sm font-medium">Không tìm thấy bản ghi nào phù hợp.</p>
-              <p class="text-xs text-slate-400 mt-1">Hãy thử đổi từ khóa tìm kiếm hoặc bấm nút "Xóa bộ lọc" bên trên.</p>
-            </div>
-          `;
+          if (cardsContainer) {
+            cardsContainer.innerHTML = `
+              <div class="text-center py-10 text-slate-400 border-2 border-dashed border-slate-200 rounded-xl">
+                <i class="fa-regular fa-folder-open text-4xl mb-2 text-slate-300"></i>
+                <p class="text-sm font-medium">Không tìm thấy bản ghi nào phù hợp.</p>
+                <p class="text-xs text-slate-400 mt-1">Hãy thử đổi từ khóa tìm kiếm hoặc bấm nút "Xóa bộ lọc" bên trên.</p>
+              </div>
+            `;
+          }
           return;
         }
 
-        container.innerHTML = currentExplorerDocs.map((doc, idx) => {
-          let detailInfo = "";
-          const docId = doc._id || "";
-          const docTitle = doc.name || doc.title || doc.segment || doc.location_text || `Bản ghi #${idx + 1}`;
+        // 4. Cập nhật giao diện Thẻ (Cards) - Đã bỏ _id và embedding
+        if (cardsContainer) {
+          cardsContainer.innerHTML = currentExplorerDocs.map((doc, idx) => {
+            let detailInfo = "";
+            const docId = doc._id || "";
+            const docTitle = doc.name || doc.title || doc.segment || doc.location_text || `Bản ghi #${idx + 1}`;
 
-          if (col === "areas") {
-            const coords = doc.center?.coordinates || [];
-            const ageDist = doc.age_distribution ? Object.entries(doc.age_distribution).map(([k, v]) => `${k}: ${(v*100).toFixed(0)}%`).join(", ") : "";
-            detailInfo = `
-              <div class="text-xs text-cyan-900 bg-cyan-50/80 p-3 rounded-lg mt-2 space-y-1 border border-cyan-100">
-                <div class="flex flex-wrap gap-3">
-                  <span><i class="fa-solid fa-location-crosshairs text-cyan-600"></i> Tọa độ tâm: [${coords[0]}, ${coords[1]}]</span>
-                  <span><i class="fa-solid fa-users text-cyan-600"></i> Mật độ: ${doc.population_density?.toLocaleString() || 'N/A'} người/km²</span>
-                  <span><i class="fa-solid fa-wallet text-cyan-600"></i> Mức thu nhập: ${doc.income_level}</span>
-                  <span><i class="fa-solid fa-circle-notch text-cyan-600"></i> Bán kính: ${doc.radius_m}m</span>
+            if (col === "areas") {
+              const coords = doc.center?.coordinates || [];
+              const ageDist = doc.age_distribution ? Object.entries(doc.age_distribution).map(([k, v]) => `${k}: ${(v*100).toFixed(0)}%`).join(", ") : "";
+              detailInfo = `
+                <div class="text-xs text-cyan-900 bg-cyan-50/80 p-3 rounded-lg mt-2 space-y-1 border border-cyan-100">
+                  <div class="flex flex-wrap gap-3">
+                    <span><i class="fa-solid fa-location-crosshairs text-cyan-600"></i> Tọa độ tâm: [${coords[0]}, ${coords[1]}]</span>
+                    <span><i class="fa-solid fa-users text-cyan-600"></i> Mật độ: ${doc.population_density?.toLocaleString() || 'N/A'} người/km²</span>
+                    <span><i class="fa-solid fa-wallet text-cyan-600"></i> Mức thu nhập: ${doc.income_level}</span>
+                    <span><i class="fa-solid fa-circle-notch text-cyan-600"></i> Bán kính: ${doc.radius_m}m</span>
+                  </div>
+                  ${ageDist ? `<div class="text-[11px] text-cyan-700">Độ tuổi: ${ageDist}</div>` : ''}
+                  ${doc.area_type ? `<div class="text-[11px] text-cyan-700">Đặc trưng: ${Array.isArray(doc.area_type) ? doc.area_type.join(", ") : doc.area_type}</div>` : ''}
                 </div>
-                ${ageDist ? `<div class="text-[11px] text-cyan-700">Độ tuổi: ${ageDist}</div>` : ''}
-                ${doc.area_type ? `<div class="text-[11px] text-cyan-700">Đặc trưng: ${Array.isArray(doc.area_type) ? doc.area_type.join(", ") : doc.area_type}</div>` : ''}
-              </div>
-            `;
-          } else if (col === "competitors") {
-            const coords = doc.location?.coordinates || [];
-            detailInfo = `
-              <div class="text-xs text-rose-900 bg-rose-50/80 p-3 rounded-lg mt-2 space-y-1.5 border border-rose-100">
-                <div class="flex flex-wrap gap-3 items-center">
-                  <span><i class="fa-solid fa-map-pin text-rose-600"></i> Tọa độ: [${coords[0]}, ${coords[1]}]</span>
-                  <span><i class="fa-solid fa-tag text-rose-600"></i> Khung giá: <strong>${doc.price_range}</strong></span>
-                  <span><i class="fa-solid fa-star text-amber-500"></i> ${doc.rating}★ (${doc.review_count} đánh giá)</span>
-                  <span class="bg-rose-100 text-rose-800 px-1.5 py-0.5 rounded font-mono">Mô hình: #${doc.business_model_id}</span>
+              `;
+            } else if (col === "competitors") {
+              const coords = doc.location?.coordinates || [];
+              detailInfo = `
+                <div class="text-xs text-rose-900 bg-rose-50/80 p-3 rounded-lg mt-2 space-y-1.5 border border-rose-100">
+                  <div class="flex flex-wrap gap-3 items-center">
+                    <span><i class="fa-solid fa-map-pin text-rose-600"></i> Tọa độ: [${coords[0]}, ${coords[1]}]</span>
+                    <span><i class="fa-solid fa-tag text-rose-600"></i> Khung giá: <strong>${doc.price_range}</strong></span>
+                    <span><i class="fa-solid fa-star text-amber-500"></i> ${doc.rating}★ (${doc.review_count} đánh giá)</span>
+                    <span class="bg-rose-100 text-rose-800 px-1.5 py-0.5 rounded font-mono">Mô hình: #${doc.business_model_id}</span>
+                  </div>
+                  <div class="text-[11px] text-rose-700"><span class="font-bold">⚠️ Điểm yếu:</span> ${doc.weakness || 'Chưa ghi nhận'}</div>
                 </div>
-                <div class="text-[11px] text-rose-700"><span class="font-bold">⚠️ Điểm yếu:</span> ${doc.weakness || 'Chưa ghi nhận'}</div>
-              </div>
-            `;
-          } else if (col === "problems") {
-            detailInfo = `
-              <div class="text-xs text-amber-950 bg-amber-50/80 p-3 rounded-lg mt-2 border border-amber-100">
-                <p class="leading-relaxed">${doc.summary}</p>
-              </div>
-            `;
-          } else if (col === "experiences") {
-            detailInfo = `
-              <div class="text-xs text-indigo-950 bg-indigo-50/80 p-3 rounded-lg mt-2 space-y-1.5 border border-indigo-100">
-                <p class="font-semibold text-indigo-950">💡 Đúc kết cốt lõi: ${doc.key_takeaway}</p>
-                ${doc.story ? `<p class="text-slate-600 italic">Câu chuyện thực tế: ${doc.story}</p>` : ''}
-                ${doc.dialogue_script ? `<p class="text-indigo-800 bg-white p-2 rounded border border-indigo-200">🗣 Lời thoại xử lý: "${doc.dialogue_script}"</p>` : ''}
-              </div>
-            `;
-          } else if (col === "market_segments") {
-            const priceStr = doc.price_range 
-              ? `${(doc.price_range.min || 0).toLocaleString()}đ - ${(doc.price_range.max || 0).toLocaleString()}đ` 
-              : (doc.price_tolerance || 'N/A');
-            const peakStr = (doc.peak_hours && Array.isArray(doc.peak_hours))
-              ? doc.peak_hours.map(p => `${p.start} - ${p.end}`).join(', ')
-              : (doc.peak_traffic || 'N/A');
-            const interestStr = doc.interest !== undefined 
-              ? `<span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded font-semibold text-[11px]"><i class="fa-solid fa-fire text-amber-500"></i> Nhu cầu: ${Math.round(doc.interest * 100)}% (${doc.interest})</span>` 
-              : '';
+              `;
+            } else if (col === "problems") {
+              detailInfo = `
+                <div class="text-xs text-amber-950 bg-amber-50/80 p-3 rounded-lg mt-2 border border-amber-100">
+                  <p class="leading-relaxed">${doc.summary}</p>
+                </div>
+              `;
+            } else if (col === "experiences") {
+              detailInfo = `
+                <div class="text-xs text-indigo-950 bg-indigo-50/80 p-3 rounded-lg mt-2 space-y-1.5 border border-indigo-100">
+                  <p class="font-semibold text-indigo-950">💡 Đúc kết cốt lõi: ${doc.key_takeaway}</p>
+                  ${doc.story ? `<p class="text-slate-600 italic">Câu chuyện thực tế: ${doc.story}</p>` : ''}
+                  ${doc.dialogue_script ? `<p class="text-indigo-800 bg-white p-2 rounded border border-indigo-200">🗣 Lời thoại xử lý: "${doc.dialogue_script}"</p>` : ''}
+                </div>
+              `;
+            } else if (col === "market_segments") {
+              const priceStr = doc.price_range 
+                ? `${(doc.price_range.min || 0).toLocaleString()}đ - ${(doc.price_range.max || 0).toLocaleString()}đ` 
+                : (doc.price_tolerance || 'N/A');
+              const peakStr = (doc.peak_hours && Array.isArray(doc.peak_hours))
+                ? doc.peak_hours.map(p => `${p.start} - ${p.end}`).join(', ')
+                : (doc.peak_traffic || 'N/A');
+              const interestStr = doc.interest !== undefined 
+                ? `<span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded font-semibold text-[11px]"><i class="fa-solid fa-fire text-amber-500"></i> Nhu cầu: ${Math.round(doc.interest * 100)}% (${doc.interest})</span>` 
+                : '';
 
-            detailInfo = `
-              <div class="text-xs text-blue-950 bg-blue-50/80 p-3 rounded-lg mt-2 space-y-2 border border-blue-100">
-                <div class="flex flex-wrap items-center gap-3">
-                  <span><i class="fa-solid fa-money-bill-wave text-blue-600"></i> Khoảng giá: <strong>${priceStr}</strong></span>
-                  <span><i class="fa-solid fa-clock text-blue-600"></i> Giờ cao điểm: <strong>${peakStr}</strong></span>
-                  ${interestStr}
+              detailInfo = `
+                <div class="text-xs text-blue-950 bg-blue-50/80 p-3 rounded-lg mt-2 space-y-2 border border-blue-100">
+                  <div class="flex flex-wrap items-center gap-3">
+                    <span><i class="fa-solid fa-money-bill-wave text-blue-600"></i> Khoảng giá: <strong>${priceStr}</strong></span>
+                    <span><i class="fa-solid fa-clock text-blue-600"></i> Giờ cao điểm: <strong>${peakStr}</strong></span>
+                    ${interestStr}
+                  </div>
+                  <p class="text-slate-800 leading-relaxed"><span class="font-bold text-blue-900">Nhu cầu & Kỳ vọng:</span> ${doc.demand || doc.behavior_notes || doc.segment || ''}</p>
                 </div>
-                <p class="text-slate-800 leading-relaxed"><span class="font-bold text-blue-900">Nhu cầu & Kỳ vọng:</span> ${doc.demand || doc.behavior_notes || doc.segment || ''}</p>
-              </div>
-            `;
-          } else if (col === "business_requests") {
-            detailInfo = `
-              <div class="text-xs text-purple-950 bg-purple-50/80 p-3 rounded-lg mt-2 space-y-1 border border-purple-100">
-                <div class="flex flex-wrap gap-3">
-                  <span>Mô hình: #${doc.business_model_id}</span>
-                  <span>Vốn: ${doc.budget ? doc.budget.toLocaleString() : 'N/A'} VND</span>
-                  <span>Thuê mặt bằng: ${doc.rent ? doc.rent.toLocaleString() + ' VND' : 'Chưa biết (null)'}</span>
+              `;
+            } else if (col === "business_requests") {
+              detailInfo = `
+                <div class="text-xs text-purple-950 bg-purple-50/80 p-3 rounded-lg mt-2 space-y-1 border border-purple-100">
+                  <div class="flex flex-wrap gap-3">
+                    <span>Mô hình: #${doc.business_model_id}</span>
+                    <span>Vốn: ${doc.budget ? doc.budget.toLocaleString() : 'N/A'} VND</span>
+                    <span>Thuê mặt bằng: ${doc.rent ? doc.rent.toLocaleString() + ' VND' : 'Chưa biết (null)'}</span>
+                  </div>
+                  ${doc.notes ? `<p class="text-slate-700">Ghi chú: ${doc.notes}</p>` : ''}
                 </div>
-                ${doc.notes ? `<p class="text-slate-700">Ghi chú: ${doc.notes}</p>` : ''}
-              </div>
-            `;
-          }
-
-          // Hiển thị Severity badge
-          let severityBadge = "";
-          if (doc.severity !== undefined) {
-            const sevNum = parseInt(doc.severity);
-            if (sevNum === 3 || doc.severity === "HIGH") {
-              severityBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 border border-red-200">🔴 Mức 3 (Tử huyệt)</span>`;
-            } else if (sevNum === 2 || doc.severity === "MEDIUM") {
-              severityBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200">🟡 Mức 2 (Mất lãi)</span>`;
-            } else {
-              severityBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700 border border-blue-200">🟢 Mức 1 (Ma sát)</span>`;
+              `;
             }
-          }
 
-          // Hiển thị Vector badge
-          let vectorBadge = "";
-          if (doc.has_vector || (Array.isArray(doc.embedding) && doc.embedding.length > 0)) {
-            const dim = doc.vector_dim || doc.embedding?.length || 1024;
-            vectorBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1"><i class="fa-solid fa-circle-check text-emerald-500"></i> Vector ${dim}-dim</span>`;
-          }
+            // Hiển thị Severity badge (Mức nghiêm trọng)
+            let severityBadge = "";
+            if (doc.severity !== undefined) {
+              const sevNum = parseInt(doc.severity);
+              if (sevNum === 3 || doc.severity === "HIGH") {
+                severityBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 border border-red-200">🔴 Mức 3 (Tử huyệt)</span>`;
+              } else if (sevNum === 2 || doc.severity === "MEDIUM") {
+                severityBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200">🟡 Mức 2 (Mất lãi)</span>`;
+              } else {
+                severityBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700 border border-blue-200">🟢 Mức 1 (Ma sát)</span>`;
+              }
+            }
 
-          const tagsHtml = (doc.tag_ids || doc.product_ids || []).map(tid => `
-            <span class="px-2 py-0.5 rounded text-[11px] font-mono ${tid === 0 ? 'bg-amber-100 text-amber-800 font-bold' : 'bg-indigo-50 text-indigo-700 border border-indigo-100'}">
-              #${tid}
-            </span>
-          `).join(" ");
+            const tagsHtml = (doc.tag_ids || doc.product_ids || []).map(tid => `
+              <span class="px-2 py-0.5 rounded text-[11px] font-mono ${tid === 0 ? 'bg-amber-100 text-amber-800 font-bold' : 'bg-indigo-50 text-indigo-700 border border-indigo-100'}">
+                #${tid}
+              </span>
+            `).join(" ");
 
-          const escapedTitle = encodeURIComponent(docTitle);
+            const escapedTitle = encodeURIComponent(docTitle);
 
-          return `
-            <div class="p-4 border border-slate-200 rounded-xl bg-slate-50/40 hover:bg-white hover:shadow-md transition duration-150">
-              <div class="flex items-start justify-between gap-3 mb-1">
-                <div class="flex-1">
-                  <div class="flex flex-wrap items-center gap-2">
-                    <span class="text-xs font-bold text-slate-400">#${idx + 1}</span>
-                    <h4 class="text-sm font-bold text-slate-800">${docTitle}</h4>
-                    ${severityBadge}
-                    ${vectorBadge}
+            return `
+              <div class="p-4 border border-slate-200 rounded-xl bg-slate-50/40 hover:bg-white hover:shadow-md transition duration-150">
+                <div class="flex items-start justify-between gap-3 mb-1">
+                  <div class="flex-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <span class="text-xs font-bold text-slate-400">#${idx + 1}</span>
+                      <h4 class="text-sm font-bold text-slate-800">${docTitle}</h4>
+                      ${severityBadge}
+                    </div>
+                  </div>
+
+                  <!-- Action Buttons: COPY JSON, SỬA & XÓA -->
+                  <div class="flex items-center gap-1.5 shrink-0">
+                    <button onclick="copySingleDocJson('${docId}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 rounded text-xs font-semibold transition flex items-center gap-1 cursor-pointer" title="Sao chép JSON bản ghi này (đã loại bỏ _id và embedding)">
+                      <i class="fa-regular fa-copy"></i> Copy JSON
+                    </button>
+                    <button onclick="openEditModal('${col}', '${docId}')" class="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded text-xs font-semibold transition flex items-center gap-1 cursor-pointer" title="Chỉnh sửa bản ghi này">
+                      <i class="fa-regular fa-pen-to-square"></i> Sửa
+                    </button>
+                    <button onclick="deleteDocument('${col}', '${docId}', decodeURIComponent('${escapedTitle}'))" class="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded text-xs font-semibold transition flex items-center gap-1 cursor-pointer" title="Xóa bản ghi này khỏi MongoDB">
+                      <i class="fa-regular fa-trash-can"></i> Xóa
+                    </button>
                   </div>
                 </div>
 
-                <!-- Action Buttons: SỬA & XÓA -->
-                <div class="flex items-center gap-1.5 shrink-0">
-                  <button onclick="openEditModal('${col}', '${docId}')" class="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded text-xs font-semibold transition flex items-center gap-1" title="Chỉnh sửa bản ghi này">
-                    <i class="fa-regular fa-pen-to-square"></i> Sửa
-                  </button>
-                  <button onclick="deleteDocument('${col}', '${docId}', decodeURIComponent('${escapedTitle}'))" class="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded text-xs font-semibold transition flex items-center gap-1" title="Xóa bản ghi này khỏi MongoDB">
-                    <i class="fa-regular fa-trash-can"></i> Xóa
-                  </button>
+                ${detailInfo}
+
+                <div class="flex flex-wrap items-center justify-between text-[11px] text-slate-400 border-t border-slate-100 pt-2.5 mt-2.5 gap-2">
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    <span class="font-medium text-slate-500">Mã Tags:</span>
+                    ${tagsHtml || '<span class="text-slate-300">Không có</span>'}
+                  </div>
                 </div>
               </div>
-
-              ${detailInfo}
-
-              <div class="flex flex-wrap items-center justify-between text-[11px] text-slate-400 border-t border-slate-100 pt-2.5 mt-2.5 gap-2">
-                <div class="flex items-center gap-1.5 flex-wrap">
-                  <span class="font-medium text-slate-500">Mã Tags:</span>
-                  ${tagsHtml || '<span class="text-slate-300">Không có</span>'}
-                </div>
-                <span class="font-mono text-[10px] text-slate-400 bg-slate-100 px-2 py-0.5 rounded">ID: ${docId}</span>
-              </div>
-            </div>
-          `;
-        }).join("");
+            `;
+          }).join("");
+        }
 
       } catch (err) {
         loading.classList.add("hidden");
-        container.innerHTML = `<div class="text-xs text-red-500 text-center py-4">Không thể kết nối đến backend API (${err}). Hãy kiểm tra xem server.py có đang chạy không.</div>`;
+        if (jsonTextarea) {
+          jsonTextarea.value = `// Lỗi tải dữ liệu: ${err}\n// Vui lòng kiểm tra server.py có đang chạy không.`;
+        }
+        if (cardsContainer) {
+          cardsContainer.innerHTML = `<div class="text-xs text-red-500 text-center py-4">Không thể kết nối đến backend API (${err}). Hãy kiểm tra xem server.py có đang chạy không.</div>`;
+        }
       }
     }
 
